@@ -29,6 +29,7 @@ public record TaskDto(
         LocalDateTime.now(),
         this.status,
         this.deadline,
-        this.priority);
+        this.priority,
+        null);
   }
 }
