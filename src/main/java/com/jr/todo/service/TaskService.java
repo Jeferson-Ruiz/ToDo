@@ -9,6 +9,7 @@ import com.jr.todo.entity.Priority;
 import com.jr.todo.entity.Status;
 import com.jr.todo.entity.Task;
 import com.jr.todo.repository.TaskRepositoy;
+import com.jr.todo.util.NameFormat;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -25,6 +26,7 @@ public class TaskService {
       throw new IllegalArgumentException("Tarea repetida");
     }
     Task task = taskDto.toEntity();
+    task.setName(NameFormat.format(task.getName()));
     Task saveTask = taskRepositoy.save(task);
     saveTask.setDateCreation(LocalDateTime.now());
 
