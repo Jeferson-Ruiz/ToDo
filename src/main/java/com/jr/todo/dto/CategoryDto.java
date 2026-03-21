@@ -5,14 +5,12 @@ import com.jr.todo.entity.Category;
 
 public record CategoryDto(
     String name,
-    String description,
-    LocalDateTime dateCreation) {
+    String description) {
 
   public static CategoryDto toDto(Category category) {
     return new CategoryDto(
         category.getName(),
-        category.getDescription(),
-        category.getDateCreation());
+        category.getDescription());
   }
 
   public Category toEntity() {
@@ -20,7 +18,7 @@ public record CategoryDto(
         null,
         this.name,
         this.description,
-        this.dateCreation,
+        LocalDateTime.now(),
         null);
   }
 }

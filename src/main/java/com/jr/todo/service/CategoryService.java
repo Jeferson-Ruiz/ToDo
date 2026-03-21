@@ -1,6 +1,5 @@
 package com.jr.todo.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -23,10 +22,8 @@ public class CategoryService {
     validateName(categoryDto.name());
 
     Category category = categoryDto.toEntity();
-    String newName = NameFormat.format(categoryDto.name());
+    String newName = NameFormat.format(category.getName());
     category.setName(newName);
-    category.setDateCreation(LocalDateTime.now());
-
     return CategoryDto.toDto(categoryRepository.save(category));
   }
 
@@ -45,7 +42,8 @@ public class CategoryService {
 
   public void updateName(Long id, String newName) {
     Category category = findById(id);
-    category.setName(newName);
+    category.setName(NameFormat.format(newName));
+    categoryRepository.save(category);
   }
 
   public void delete(Long id) {

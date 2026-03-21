@@ -9,7 +9,7 @@ import com.jr.todo.entity.Category;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-  @Query("SELECT Categority c FROM Category WHERE c.name = :name")
+  @Query("SELECT c FROM Category c WHERE c.name = :name")
   Optional<Category> findByName(@Param("name") String name);
 
   @Query("SELECT COUNT(c)>0 FROM Category c WHERE c.name =:name")
