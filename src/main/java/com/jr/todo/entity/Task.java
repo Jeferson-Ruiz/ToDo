@@ -43,6 +43,6 @@ public class Task {
   private Priority priority;
 
   @ManyToOne
-  @JoinColumn(name = "category")
-  private Task task;
+  @JoinColumn(name = "category_id")
+  private Category category;
 }
