@@ -10,7 +10,8 @@ public record TaskDto(
     String description,
     Status status,
     LocalDateTime deadline,
-    Priority priority) {
+    Priority priority,
+    String category) {
 
   public static TaskDto toDto(Task task) {
     return new TaskDto(
@@ -18,7 +19,8 @@ public record TaskDto(
         task.getDescription(),
         task.getStatus(),
         task.getDeadline(),
-        task.getPriority());
+        task.getPriority(),
+        task.getCategory() != null ? task.getCategory().getName() : null);
   }
 
   public Task toEntity() {
@@ -26,7 +28,7 @@ public record TaskDto(
         null,
         this.name,
         this.description,
-        LocalDateTime.now(),
+        null,
         this.status,
         this.deadline,
         this.priority,

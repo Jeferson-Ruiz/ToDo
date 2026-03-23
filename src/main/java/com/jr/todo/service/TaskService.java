@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import com.jr.todo.dto.TaskDto;
+import com.jr.todo.entity.Category;
 import com.jr.todo.entity.Priority;
 import com.jr.todo.entity.Status;
 import com.jr.todo.entity.Task;
+import com.jr.todo.repository.CategoryRepository;
 import com.jr.todo.repository.TaskRepositoy;
 import com.jr.todo.util.NameFormat;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,26 +17,41 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class TaskService {
   private final TaskRepositoy taskRepositoy;
+  private final CategoryRepository categoryRepository;
 
-  private TaskService(TaskRepositoy taskRepositoy) {
+  private TaskService(TaskRepositoy taskRepositoy, CategoryRepository categoryRepository) {
     this.taskRepositoy = taskRepositoy;
+    this.categoryRepository = categoryRepository;
   }
 
-  // Crear
+  /*----------------------
+  Crear
+  ----------------------*/
   public TaskDto createTask(TaskDto taskDto) {
+
+    // Tarea unica
     if (taskRepositoy.existByName(taskDto.name())) {
       throw new IllegalArgumentException("Tarea repetida");
     }
+
+    // Validar fechas
+    validarFachas(taskDto.deadline());
+
+    // Buscar la categoría por nombre (solo si existe)
+    Category category = taskDto.category() != null ? findCategoryByName(taskDto.category()) : null;
+
     Task task = taskDto.toEntity();
     task.setName(NameFormat.format(task.getName()));
+
+    task.setCategory(category);
     Task saveTask = taskRepositoy.save(task);
     saveTask.setDateCreation(LocalDateTime.now());
-
-    validarFachas(saveTask.getDateCreation(), saveTask.getDeadline());
     return TaskDto.toDto(saveTask);
   }
 
-  // Buscar
+  /*----------------------
+  Find
+  ----------------------*/
   public List<TaskDto> getAllTaks() {
     List<Task> tasks = taskRepositoy.findAll();
     return mapToDto(tasks);
@@ -60,7 +77,9 @@ public class TaskService {
     return mapToDto(tasks);
   }
 
-  // Actualizar
+  /*----------------------
+  Update
+  ----------------------*/
   public void updateTaskName(Long id, String newName) {
     Task task = findTaskById(id);
     task.setName(newName);
@@ -81,6 +100,7 @@ public class TaskService {
 
   public void updateDeadline(Long id, LocalDateTime newDate) {
     Task task = findTaskById(id);
+    validarFachas(newDate);
     task.setDeadline(newDate);
     taskRepositoy.save(task);
   }
@@ -91,14 +111,24 @@ public class TaskService {
     taskRepositoy.save(task);
   }
 
-  // eliminar
+  public void updateCategory(Long id, String name) {
+    Task task = findTaskById(id);
+    Category category = findCategoryByName(name);
+    task.setCategory(category);
+    taskRepositoy.save(task);
+  }
+
+  /*----------------------
+  Delete
+  ----------------------*/
   public void deleteTask(Long id) {
-    Task task = taskRepositoy.findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("No se encontro tarea"));
+    Task task = findTaskById(id);
     taskRepositoy.delete(task);
   }
 
-  // helper
+  /*----------------------
+  Helpers
+  ----------------------*/
   private Task findTaskByName(String name) {
     Task task = taskRepositoy.findTaskByName(name)
         .orElseThrow(() -> new EntityNotFoundException("No se encontro tarea"));
@@ -111,16 +141,22 @@ public class TaskService {
     return task;
   }
 
+  private Category findCategoryByName(String name) {
+    String newname = NameFormat.format(name);
+    Category category = categoryRepository.findByName(newname)
+        .orElseThrow(() -> new EntityNotFoundException("Categoría inexistente: " + newname));
+    return category;
+  }
+
   private List<TaskDto> mapToDto(List<Task> tasks) {
     return tasks.stream()
         .map(TaskDto::toDto)
         .collect(Collectors.toList());
   }
 
-  private void validarFachas(LocalDateTime dateCreation, LocalDateTime deadline) {
-    if (deadline.isAfter(dateCreation)) {
-      throw new IllegalArgumentException("La fecha limite no debe ser menor a la de creacion");
+  private void validarFachas(LocalDateTime deadline) {
+    if (!deadline.isAfter(LocalDateTime.now())) {
+      throw new IllegalArgumentException("La fecha límite debe ser posterior a la fecha de creación");
     }
-
   }
 }

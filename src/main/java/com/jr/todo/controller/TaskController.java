@@ -86,7 +86,6 @@ public class TaskController {
     return ResponseEntity.noContent().build();
   }
 
-  // validacion de fecha
   @PatchMapping("/update/deadline/{id}")
   public ResponseEntity<?> updateDeadline(@PathVariable Long id, @RequestBody DateDto newDate) {
     taskService.updateDeadline(id, newDate.date());
@@ -96,6 +95,12 @@ public class TaskController {
   @PatchMapping("/update/priority/{id}")
   public ResponseEntity<?> updatePriority(@PathVariable Long id, @RequestBody PriorityDto priority) {
     taskService.updatePriority(id, priority.priority());
+    return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/update/category-name/{id}")
+  public ResponseEntity<?> updateCategoty(@PathVariable Long id, @RequestBody NameDto request) {
+    taskService.updateCategory(id, request.name());
     return ResponseEntity.noContent().build();
   }
 
