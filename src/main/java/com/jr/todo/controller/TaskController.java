@@ -43,6 +43,12 @@ public class TaskController {
     return ResponseEntity.ok(taskDtos);
   }
 
+  @GetMapping("/category")
+  public ResponseEntity<?> getAllByCategory(@RequestBody NameDto request) {
+    List<TaskDto> taskDtos = taskService.getAllByCategory(request.name());
+    return ResponseEntity.ok(taskDtos);
+  }
+
   @GetMapping("/name")
   public ResponseEntity<?> getTaskByName(@RequestBody NameDto name) {
     TaskDto taskDto = taskService.getTaskByName(name.name());
