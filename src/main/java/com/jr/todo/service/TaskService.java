@@ -57,6 +57,12 @@ public class TaskService {
     return mapToDto(tasks);
   }
 
+  public List<TaskDto> getAllByCategory(String name) {
+    String findName = NameFormat.format(name);
+    List<Task> tasks = taskRepositoy.findAllByCategory(findName);
+    return mapToDto(tasks);
+  }
+
   public TaskDto getTaskByName(String name) {
     Task task = findTaskByName(name);
     return TaskDto.toDto(task);
