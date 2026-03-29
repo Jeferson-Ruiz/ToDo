@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.jr.todo.dto.CategoryDto;
-import com.jr.todo.dto.NameDto;
+import com.jr.todo.dto.DataDto;
 import com.jr.todo.service.CategoryService;
 
 @Controller
@@ -37,14 +37,14 @@ public class CategoryController {
   }
 
   @GetMapping("/name")
-  public ResponseEntity<?> getByName(@RequestBody NameDto request) {
-    CategoryDto category = categoryService.findByName(request.name());
+  public ResponseEntity<?> getByName(@RequestBody DataDto name) {
+    CategoryDto category = categoryService.findByName(name.data());
     return ResponseEntity.ok(category);
   }
 
   @PatchMapping("/update/{id}")
-  public ResponseEntity<?> updateName(@PathVariable Long id, @RequestBody NameDto request) {
-    categoryService.updateName(id, request.name());
+  public ResponseEntity<?> updateName(@PathVariable Long id, @RequestBody DataDto name) {
+    categoryService.updateName(id, name.data());
     return ResponseEntity.noContent().build();
   }
 

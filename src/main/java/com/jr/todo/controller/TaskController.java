@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jr.todo.dto.DateDto;
 import com.jr.todo.dto.DescriptionDto;
-import com.jr.todo.dto.NameDto;
+import com.jr.todo.dto.DataDto;
 import com.jr.todo.dto.PriorityDto;
 import com.jr.todo.dto.StatusDto;
 import com.jr.todo.dto.TaskDto;
@@ -44,14 +44,14 @@ public class TaskController {
   }
 
   @GetMapping("/category")
-  public ResponseEntity<?> getAllByCategory(@RequestBody NameDto request) {
-    List<TaskDto> taskDtos = taskService.getAllByCategory(request.name());
+  public ResponseEntity<?> getAllByCategory(@RequestBody DataDto category) {
+    List<TaskDto> taskDtos = taskService.getAllByCategory(category.data());
     return ResponseEntity.ok(taskDtos);
   }
 
   @GetMapping("/name")
-  public ResponseEntity<?> getTaskByName(@RequestBody NameDto name) {
-    TaskDto taskDto = taskService.getTaskByName(name.name());
+  public ResponseEntity<?> getTaskByName(@RequestBody DataDto name) {
+    TaskDto taskDto = taskService.getTaskByName(name.data());
     return ResponseEntity.ok(taskDto);
   }
 
@@ -75,8 +75,8 @@ public class TaskController {
 
   // Update
   @PatchMapping("/update/name/{id}")
-  public ResponseEntity<?> updateTaskName(@PathVariable Long id, @RequestBody NameDto newName) {
-    taskService.updateTaskName(id, newName.name());
+  public ResponseEntity<?> updateTaskName(@PathVariable Long id, @RequestBody DataDto newName) {
+    taskService.updateTaskName(id, newName.data());
     return ResponseEntity.noContent().build();
   }
 
@@ -105,8 +105,8 @@ public class TaskController {
   }
 
   @PatchMapping("/update/category-name/{id}")
-  public ResponseEntity<?> updateCategoty(@PathVariable Long id, @RequestBody NameDto request) {
-    taskService.updateCategory(id, request.name());
+  public ResponseEntity<?> updateCategoty(@PathVariable Long id, @RequestBody DataDto category) {
+    taskService.updateCategory(id, category.data());
     return ResponseEntity.noContent().build();
   }
 
