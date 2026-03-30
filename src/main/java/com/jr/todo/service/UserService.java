@@ -19,9 +19,10 @@ public class UserService {
   }
 
   public UserDto createUser(UserDto userDto) {
-    existUser(userDto.username());
-
+    String username = userDto.username().strip();
+    existUser(username);
     User user = userDto.toEntity();
+    user.setUsername(username);
     user.setPassword(passwordEncoder.encode(userDto.password()));
     return UserDto.toDto(userRepository.save(user));
   }
@@ -29,7 +30,7 @@ public class UserService {
   public void updatePasswod(Long id, String oldPassword, String newPassword) {
     User user = findUserById(id);
 
-    if (!passwordEncoder.encode(oldPassword).equals(user.getPassword())) {
+    if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
       throw new IllegalArgumentException("Error de validacion de contraseña");
     }
     user.setPassword(passwordEncoder.encode(newPassword));
