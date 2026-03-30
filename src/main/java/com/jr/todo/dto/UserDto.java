@@ -1,7 +1,9 @@
 package com.jr.todo.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.jr.todo.entity.User;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record UserDto(
     String name,
     String username,
