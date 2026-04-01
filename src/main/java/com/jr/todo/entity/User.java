@@ -1,5 +1,6 @@
 package com.jr.todo.entity;
 
+import java.time.LocalDate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,12 +28,21 @@ public class User {
   @Column(name = "usr_name", nullable = false)
   private String name;
 
-  @Column(name = "usr_username", nullable = false, unique = true)
-  private String username;
+  @Column(name = "usr_apellido", nullable = false)
+  private String lastName;
 
   @Column(name = "usr_email", nullable = false, unique = true)
   private String email;
 
+  @Column(name = "usr_username", nullable = false, unique = true)
+  private String username;
+
   @Column(name = "usr_password", nullable = false)
   private String password;
+
+  @Column(name = "usr_activo")
+  private boolean enable;
+
+  @Column(name = "_usr_fecha_registro")
+  private LocalDate registrationDte;
 }
