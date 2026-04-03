@@ -1,8 +1,10 @@
 package com.jr.todo.service;
 
+import java.time.LocalDate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.jr.todo.dto.UserDto;
+import com.jr.todo.dto.user.UserCreateDto;
+import com.jr.todo.dto.user.UserResponseDto;
 import com.jr.todo.entity.User;
 import com.jr.todo.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,13 +20,14 @@ public class UserService {
     this.passwordEncoder = passwordEncoder;
   }
 
-  public UserDto createUser(UserDto userDto) {
+  public UserResponseDto createUser(UserCreateDto userDto) {
     String username = userDto.username().strip();
     existUser(username);
     User user = userDto.toEntity();
     user.setUsername(username);
     user.setPassword(passwordEncoder.encode(userDto.password()));
-    return UserDto.toDto(userRepository.save(user));
+    user.setRegistrationDte(LocalDate.now());
+    return UserResponseDto.toDto(userRepository.save(user));
   }
 
   public void updatePasswod(Long id, String oldPassword, String newPassword) {
@@ -34,6 +37,16 @@ public class UserService {
       throw new IllegalArgumentException("Error de validacion de contraseña");
     }
     user.setPassword(passwordEncoder.encode(newPassword));
+    userRepository.save(user);
+  }
+
+  public void updateEnable(Long id, boolean enable) {
+    User user = findUserById(id);
+
+    if (user.isEnable() == enable) {
+      throw new IllegalArgumentException(" El usuario ya se encuentra desactivado");
+    }
+    user.setEnable(enable);
     userRepository.save(user);
   }
 
