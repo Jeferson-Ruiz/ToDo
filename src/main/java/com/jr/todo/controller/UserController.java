@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.jr.todo.dto.EnableUpdateDto;
 import com.jr.todo.dto.PasswordUpdateDto;
-import com.jr.todo.dto.UserDto;
+import com.jr.todo.dto.user.UserCreateDto;
+import com.jr.todo.dto.user.UserResponseDto;
 import com.jr.todo.service.UserService;
 
 @RestController
@@ -20,8 +22,8 @@ public class UserController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<?> userCreate(@RequestBody UserDto userRequest) {
-    UserDto userDto = userService.createUser(userRequest);
+  public ResponseEntity<?> userCreate(@RequestBody UserCreateDto userRequest) {
+    UserResponseDto userDto = userService.createUser(userRequest);
     return ResponseEntity.ok(userDto);
   }
 
@@ -31,4 +33,9 @@ public class UserController {
     return ResponseEntity.noContent().build();
   }
 
+  @PatchMapping("/admin/update-enable")
+  public ResponseEntity<?> updateEnable(@RequestBody EnableUpdateDto data) {
+    userService.updateEnable(data.id(), data.enable());
+    return ResponseEntity.noContent().build();
+  }
 }
