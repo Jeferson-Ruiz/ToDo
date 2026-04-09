@@ -2,9 +2,10 @@ package com.jr.todo.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
-import com.jr.todo.entity.Priority;
-import com.jr.todo.entity.Status;
+
 import com.jr.todo.entity.Task;
+import com.jr.todo.entity.enums.Priority;
+import com.jr.todo.entity.enums.Status;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record TaskDto(

@@ -1,6 +1,10 @@
 package com.jr.todo.entity;
 
 import java.time.LocalDateTime;
+
+import com.jr.todo.entity.enums.Priority;
+import com.jr.todo.entity.enums.Status;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

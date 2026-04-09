@@ -1,4 +1,4 @@
-package com.jr.todo.entity;
+package com.jr.todo.entity.enums;
 
 public enum Priority {
   BAJA,
