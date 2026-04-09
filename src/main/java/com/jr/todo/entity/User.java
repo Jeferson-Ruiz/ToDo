@@ -1,16 +1,11 @@
 package com.jr.todo.entity;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -51,6 +46,4 @@ public class User {
   @Column(name = "_usr_fecha_registro")
   private LocalDate registrationDte;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  private List<Role> roles = new ArrayList<>();
 }
