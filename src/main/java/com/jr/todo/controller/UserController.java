@@ -10,14 +10,14 @@ import com.jr.todo.dto.EnableUpdateDto;
 import com.jr.todo.dto.PasswordUpdateDto;
 import com.jr.todo.dto.user.UserCreateDto;
 import com.jr.todo.dto.user.UserResponseDto;
-import com.jr.todo.service.UserService;
+import com.jr.todo.service.IUserService;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
-  private final UserService userService;
+  private final IUserService userService;
 
-  public UserController(UserService userService) {
+  public UserController(IUserService userService) {
     this.userService = userService;
   }
 

@@ -10,7 +10,7 @@ import com.jr.todo.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class UserService {
+public class UserService implements IUserService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;

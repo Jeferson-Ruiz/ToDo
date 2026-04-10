@@ -13,7 +13,7 @@ import com.jr.todo.dto.StatusDto;
 import com.jr.todo.dto.TaskDto;
 import com.jr.todo.entity.enums.Priority;
 import com.jr.todo.entity.enums.Status;
-import com.jr.todo.service.TaskService;
+import com.jr.todo.service.ITaskService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -25,9 +25,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/task")
 public class TaskController {
 
-  private final TaskService taskService;
+  private final ITaskService taskService;
 
-  public TaskController(TaskService taskService) {
+  public TaskController(ITaskService taskService) {
     this.taskService = taskService;
   }
 

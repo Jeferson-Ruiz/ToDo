@@ -15,7 +15,7 @@ import com.jr.todo.util.NameFormat;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class TaskService {
+public class TaskService implements ITaskService {
   private final TaskRepositoy taskRepositoy;
   private final CategoryRepository categoryRepository;
 

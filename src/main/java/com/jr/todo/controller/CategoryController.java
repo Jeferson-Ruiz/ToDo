@@ -12,15 +12,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.jr.todo.dto.CategoryDto;
 import com.jr.todo.dto.DataDto;
-import com.jr.todo.service.CategoryService;
+import com.jr.todo.service.ICategoryService;
 
 @Controller
 @RequestMapping("/category")
 public class CategoryController {
 
-  private final CategoryService categoryService;
+  private final ICategoryService categoryService;
 
-  public CategoryController(CategoryService categoryService) {
+  public CategoryController(ICategoryService categoryService) {
     this.categoryService = categoryService;
   }
 

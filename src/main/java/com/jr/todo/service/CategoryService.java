@@ -10,7 +10,7 @@ import com.jr.todo.util.NameFormat;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class CategoryService {
+public class CategoryService implements ICategoryService {
 
   private final CategoryRepository categoryRepository;
 
