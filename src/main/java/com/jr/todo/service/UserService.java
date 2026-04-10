@@ -22,7 +22,8 @@ public class UserService implements IUserService {
 
   public UserResponseDto createUser(UserCreateDto userDto) {
     String username = userDto.username().strip();
-    existUser(username);
+    String email = userDto.email().strip();
+    validateInformation(username, email);
     User user = userDto.toEntity();
     user.setUsername(username);
     user.setPassword(passwordEncoder.encode(userDto.password()));
@@ -51,9 +52,12 @@ public class UserService implements IUserService {
   }
 
   // helpers
-  private void existUser(String name) {
+  private void validateInformation(String name, String email) {
     if (userRepository.existsByName(name)) {
       throw new IllegalArgumentException("username ya registrado");
+    }
+    if (userRepository.existByEmail(email)) {
+      throw new IllegalArgumentException("El Email ya esta registrado");
     }
   }
 
