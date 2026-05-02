@@ -1,6 +1,8 @@
 package com.jr.todo.service;
 
 import java.time.LocalDate;
+
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.jr.todo.dto.user.AuthRequest;
@@ -9,6 +11,8 @@ import com.jr.todo.dto.user.UserCreateDto;
 import com.jr.todo.entity.User;
 import com.jr.todo.entity.enums.Role;
 import com.jr.todo.repository.UserRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class AuthService implements IAuthService {
@@ -27,7 +31,10 @@ public class AuthService implements IAuthService {
   }
 
   public AuthResponse login(AuthRequest request) {
-    return null;
+    User user = findByEmail(request.email());
+    validatePassword(request.password(), user.getPassword());
+
+    return new AuthResponse(jwtService.getToken(user));
   }
 
   public AuthResponse register(UserCreateDto request) {
@@ -52,6 +59,18 @@ public class AuthService implements IAuthService {
     }
     if (userRepository.existByEmail(email)) {
       throw new IllegalArgumentException("El Email ya esta registrado");
+    }
+  }
+
+  private User findByEmail(String email) {
+    User user = userRepository.findByEmail(email)
+        .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+    return user;
+  }
+
+  private void validatePassword(String password, String encodedPassword) {
+    if (!passwordEncoder.matches(password, encodedPassword)) {
+      throw new BadCredentialsException("Contraseña incorrecta");
     }
   }
 }
