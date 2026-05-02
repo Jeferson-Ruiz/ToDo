@@ -83,4 +83,10 @@ public class User implements UserDetails {
   public boolean isEnabled() {
     return true;
   }
+
+  // sobre escribir metodo
+  @Override
+  public String getUsername() {
+    return this.email;
+  }
 }
