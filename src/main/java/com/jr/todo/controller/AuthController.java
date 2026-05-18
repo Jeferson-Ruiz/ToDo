@@ -9,6 +9,7 @@ import com.jr.todo.dto.user.AuthRequest;
 import com.jr.todo.dto.user.AuthResponse;
 import com.jr.todo.dto.user.UserCreateDto;
 import com.jr.todo.service.IAuthService;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/auth")
@@ -28,6 +29,12 @@ public class AuthController {
   @PostMapping("/register")
   public ResponseEntity<AuthResponse> register(@RequestBody UserCreateDto request) {
     return ResponseEntity.ok(authService.register(request));
+  }
+
+  @PostMapping("/logouth")
+  public ResponseEntity<String> logout(HttpServletRequest request) {
+    authService.logout(request.getHeader("AUTHORIZATION"));
+    return ResponseEntity.ok("Sesión cerrada con exito");
   }
 
 }

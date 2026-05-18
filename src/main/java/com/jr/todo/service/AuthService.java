@@ -1,7 +1,6 @@
 package com.jr.todo.service;
 
 import java.time.LocalDate;
-
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,7 +10,6 @@ import com.jr.todo.dto.user.UserCreateDto;
 import com.jr.todo.entity.User;
 import com.jr.todo.entity.enums.Role;
 import com.jr.todo.repository.UserRepository;
-
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -20,14 +18,17 @@ public class AuthService implements IAuthService {
   private final UserRepository userRepository;
   private final IJwtService jwtService;
   private final PasswordEncoder passwordEncoder;
+  private final TokenBlacklistService tokenBlacklistService;
 
   public AuthService(
       UserRepository userRepository,
       PasswordEncoder passwordEncoder,
-      JwtService jwtService) {
+      JwtService jwtService,
+      TokenBlacklistService tokenBlacklistService) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.jwtService = jwtService;
+    this.tokenBlacklistService = tokenBlacklistService;
   }
 
   public AuthResponse login(AuthRequest request) {
@@ -50,6 +51,13 @@ public class AuthService implements IAuthService {
     userRepository.save(user);
 
     return new AuthResponse(jwtService.getToken(user));
+  }
+
+  public void logout(String authHeader) {
+    if (authHeader != null && authHeader.startsWith("Bearer ")) {
+      String token = authHeader.substring(7);
+      tokenBlacklistService.blackListToken(token);
+    }
   }
 
   // helpers

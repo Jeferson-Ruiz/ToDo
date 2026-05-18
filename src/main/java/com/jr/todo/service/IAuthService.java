@@ -8,4 +8,7 @@ public interface IAuthService {
   AuthResponse login(AuthRequest request);
 
   AuthResponse register(UserCreateDto request);
+
+  public void logout(String authHeader);
+
 }

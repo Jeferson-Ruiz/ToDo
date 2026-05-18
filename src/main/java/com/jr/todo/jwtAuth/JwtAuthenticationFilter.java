@@ -10,7 +10,10 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import com.jr.todo.service.ITokenBlacklistService;
 import com.jr.todo.service.JwtService;
+import com.jr.todo.service.TokenBlacklistService;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,12 +21,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Component
-
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtService jwtService;
   private final UserDetailsService userDetailsService;
+  private final ITokenBlacklistService tokenBlacklistService;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -34,6 +37,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     if (token == null) {
       filterChain.doFilter(request, response);
+      return;
+    }
+
+    // valida que la seccion no
+    if (tokenBlacklistService.isBlackListed(token)) {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      response.setContentType("application/json");
+      response.getWriter().write("{\"error\": \"Sesión cerrada. Inicia sesión nuevamente.\"}");
       return;
     }
 

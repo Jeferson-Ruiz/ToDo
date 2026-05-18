@@ -1,0 +1,21 @@
+package com.jr.todo.service;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import org.springframework.stereotype.Service;
+
+@Service
+public class TokenBlacklistService implements ITokenBlacklistService {
+
+    private final Set<String> blackListedTokens = Collections.synchronizedSet(new HashSet<>());
+
+    public void blackListToken(String token) {
+        blackListedTokens.add(token);
+    }
+
+    public boolean isBlackListed(String token) {
+        return blackListedTokens.contains(token);
+    }
+
+}
