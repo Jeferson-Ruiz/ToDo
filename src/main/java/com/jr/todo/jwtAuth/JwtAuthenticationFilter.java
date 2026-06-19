@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import com.jr.todo.service.ITokenBlacklistService;
-import com.jr.todo.service.JwtService;
-import com.jr.todo.service.TokenBlacklistService;
+import com.jr.todo.service.impl.JwtService;
+import com.jr.todo.service.impl.TokenBlacklistService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,4 +1,4 @@
-package com.jr.todo.service;
+package com.jr.todo.service.impl;
 
 import java.time.LocalDate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -7,6 +7,8 @@ import com.jr.todo.dto.user.UserCreateDto;
 import com.jr.todo.dto.user.UserResponseDto;
 import com.jr.todo.entity.User;
 import com.jr.todo.repository.UserRepository;
+import com.jr.todo.service.IUserService;
+
 import jakarta.persistence.EntityNotFoundException;
 
 @Service

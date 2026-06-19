@@ -1,4 +1,4 @@
-package com.jr.todo.service;
+package com.jr.todo.service.impl;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -8,6 +8,9 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import com.jr.todo.service.IJwtService;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

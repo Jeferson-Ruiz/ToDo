@@ -1,4 +1,4 @@
-package com.jr.todo.service;
+package com.jr.todo.service.impl;
 
 import java.time.LocalDate;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -10,6 +10,9 @@ import com.jr.todo.dto.user.UserCreateDto;
 import com.jr.todo.entity.User;
 import com.jr.todo.entity.enums.Role;
 import com.jr.todo.repository.UserRepository;
+import com.jr.todo.service.IAuthService;
+import com.jr.todo.service.IJwtService;
+
 import jakarta.persistence.EntityNotFoundException;
 
 @Service

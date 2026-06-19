@@ -1,4 +1,4 @@
-package com.jr.todo.service;
+package com.jr.todo.service.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,6 +11,7 @@ import com.jr.todo.entity.enums.Priority;
 import com.jr.todo.entity.enums.Status;
 import com.jr.todo.repository.CategoryRepository;
 import com.jr.todo.repository.TaskRepositoy;
+import com.jr.todo.service.ITaskService;
 import com.jr.todo.util.TextFormat;
 import jakarta.persistence.EntityNotFoundException;
 

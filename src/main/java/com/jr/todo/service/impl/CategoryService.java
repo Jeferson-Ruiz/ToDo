@@ -1,4 +1,4 @@
-package com.jr.todo.service;
+package com.jr.todo.service.impl;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.jr.todo.dto.CategoryDto;
 import com.jr.todo.entity.Category;
 import com.jr.todo.repository.CategoryRepository;
+import com.jr.todo.service.ICategoryService;
 import com.jr.todo.util.TextFormat;
 import jakarta.persistence.EntityNotFoundException;
 
