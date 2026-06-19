@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import com.jr.todo.dto.CategoryDto;
 import com.jr.todo.entity.Category;
 import com.jr.todo.repository.CategoryRepository;
-import com.jr.todo.util.NameFormat;
+import com.jr.todo.util.TextFormat;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -22,11 +22,12 @@ public class CategoryService implements ICategoryService {
     validateName(categoryDto.name());
 
     Category category = categoryDto.toEntity();
-    String newName = NameFormat.format(category.getName());
+    String newName = TextFormat.nameFormat(category.getName());
     category.setName(newName);
     return CategoryDto.toDto(categoryRepository.save(category));
   }
 
+  @Override
   public List<CategoryDto> findAll() {
     List<Category> categories = categoryRepository.findAll();
     return categories.stream()
@@ -34,18 +35,29 @@ public class CategoryService implements ICategoryService {
         .collect(Collectors.toList());
   }
 
+  @Override
   public CategoryDto findByName(String name) {
     Category category = categoryRepository.findByName(name)
         .orElseThrow(() -> new EntityNotFoundException("Categoria no encontrada"));
     return CategoryDto.toDto(category);
   }
 
+  @Override
   public void updateName(Long id, String newName) {
     Category category = findById(id);
-    category.setName(NameFormat.format(newName));
+    category.setName(TextFormat.nameFormat(newName));
     categoryRepository.save(category);
   }
 
+  @Override
+  public void updateDescription(Long id, String description) {
+    Category category = findById(id);
+    String newDescription = TextFormat.validaTextNull(description);
+    category.setDescription(newDescription);
+    categoryRepository.save(category);
+  }
+
+  @Override
   public void delete(Long id) {
     Category category = findById(id);
     categoryRepository.delete(category);

@@ -13,6 +13,8 @@ public interface ICategoryService {
 
   void updateName(Long id, String newName);
 
+  void updateDescription(Long id, String description);
+
   void delete(Long id);
 
 }
