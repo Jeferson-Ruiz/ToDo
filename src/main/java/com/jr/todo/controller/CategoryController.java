@@ -42,9 +42,15 @@ public class CategoryController {
     return ResponseEntity.ok(category);
   }
 
-  @PatchMapping("/update/{id}")
+  @PatchMapping("/update-name/{id}")
   public ResponseEntity<?> updateName(@PathVariable Long id, @RequestBody DataDto name) {
     categoryService.updateName(id, name.data());
+    return ResponseEntity.noContent().build();
+  }
+
+  @PatchMapping("/updata-description/{id}")
+  public ResponseEntity<?> updateDescription(@PathVariable Long id, @RequestBody DataDto description) {
+    categoryService.updateDescription(id, description.data());
     return ResponseEntity.noContent().build();
   }
 
