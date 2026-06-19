@@ -11,7 +11,7 @@ import com.jr.todo.entity.enums.Priority;
 import com.jr.todo.entity.enums.Status;
 import com.jr.todo.repository.CategoryRepository;
 import com.jr.todo.repository.TaskRepositoy;
-import com.jr.todo.util.NameFormat;
+import com.jr.todo.util.TextFormat;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -41,7 +41,7 @@ public class TaskService implements ITaskService {
     Category category = taskDto.category() != null ? findCategoryByName(taskDto.category()) : null;
 
     Task task = taskDto.toEntity();
-    task.setName(NameFormat.format(task.getName()));
+    task.setName(TextFormat.nameFormat(task.getName()));
 
     task.setCategory(category);
     Task saveTask = taskRepositoy.save(task);
@@ -58,7 +58,7 @@ public class TaskService implements ITaskService {
   }
 
   public List<TaskDto> getAllByCategory(String name) {
-    String findName = NameFormat.format(name);
+    String findName = TextFormat.nameFormat(name);
     List<Task> tasks = taskRepositoy.findAllByCategory(findName);
     return mapToDto(tasks);
   }
@@ -148,7 +148,7 @@ public class TaskService implements ITaskService {
   }
 
   private Category findCategoryByName(String name) {
-    String newname = NameFormat.format(name);
+    String newname = TextFormat.nameFormat(name);
     Category category = categoryRepository.findByName(newname)
         .orElseThrow(() -> new EntityNotFoundException("Categoría inexistente: " + newname));
     return category;
