@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jr.todo.dto.user.AuthRequest;
-import com.jr.todo.dto.user.AuthResponse;
 import com.jr.todo.dto.user.UserCreateDto;
 import com.jr.todo.service.IAuthService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +26,7 @@ public class AuthController {
   }
 
   @PostMapping("/register")
-  public ResponseEntity<AuthResponse> register(@RequestBody UserCreateDto request) {
+  public ResponseEntity<?> register(@RequestBody UserCreateDto request) {
     return ResponseEntity.ok(authService.register(request));
   }
 

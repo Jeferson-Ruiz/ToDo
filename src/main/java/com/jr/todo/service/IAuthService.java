@@ -7,7 +7,7 @@ import com.jr.todo.dto.user.UserCreateDto;
 public interface IAuthService {
   AuthResponse login(AuthRequest request);
 
-  AuthResponse register(UserCreateDto request);
+  String register(UserCreateDto request);
 
   public void logout(String authHeader);
 
