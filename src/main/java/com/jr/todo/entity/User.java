@@ -49,7 +49,7 @@ public class User implements UserDetails {
   private String password;
 
   @Column(name = "usr_activo")
-  private boolean enable;
+  private boolean enabled;
 
   @Column(name = "usr_role")
   @Enumerated(EnumType.STRING)

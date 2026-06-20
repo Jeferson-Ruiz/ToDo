@@ -21,7 +21,7 @@ public record UserResponseDto(
         user.getEmail(),
         user.getUsername(),
         null,
-        user.isEnable(),
+        user.isEnabled(),
         user.getRegistrationDte());
   }
 }
