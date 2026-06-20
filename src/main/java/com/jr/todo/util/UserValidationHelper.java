@@ -1,8 +1,8 @@
 package com.jr.todo.util;
 
 import org.springframework.stereotype.Component;
-import com.jr.todo.entity.User;
-import com.jr.todo.repository.UserRepository;
+import com.jr.todo.modules.user.entity.User;
+import com.jr.todo.modules.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @Component
