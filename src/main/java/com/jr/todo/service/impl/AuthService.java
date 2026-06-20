@@ -37,15 +37,20 @@ public class AuthService implements IAuthService {
     User user = findByEmail(request.email());
     validatePassword(request.password(), user.getPassword());
 
+    isEnabledUser(request.email());
+
     return new AuthResponse(jwtService.getToken(user));
   }
 
-  public AuthResponse register(UserCreateDto request) {
+  public String register(UserCreateDto request) {
+
+    String message = "Registro exitoso, activar cuenta via email";
     String username = request.username().strip();
     String email = request.email().strip();
 
     userValidation.validateUsername(username);
     userValidation.validateEmail(email);
+    isEnabledUser(email);
 
     User user = request.toEntity();
     user.setUsername(username);
@@ -55,7 +60,8 @@ public class AuthService implements IAuthService {
     user.setRegistrationDte(LocalDate.now());
     userRepository.save(user);
 
-    return new AuthResponse(jwtService.getToken(user));
+    return message;
+    // return new AuthResponse(jwtService.getToken(user));
   }
 
   public void logout(String authHeader) {
@@ -70,6 +76,12 @@ public class AuthService implements IAuthService {
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
     return user;
+  }
+
+  private void isEnabledUser(String email) {
+    if (!userRepository.isUserEnabled(email)) {
+      throw new IllegalAccessError("Usuario inactivo, confirme cuenta mediante email");
+    }
   }
 
   private void validatePassword(String password, String encodedPassword) {
