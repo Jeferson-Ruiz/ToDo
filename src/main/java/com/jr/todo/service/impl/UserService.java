@@ -8,16 +8,18 @@ import com.jr.todo.dto.user.UserResponseDto;
 import com.jr.todo.entity.User;
 import com.jr.todo.repository.UserRepository;
 import com.jr.todo.service.IUserService;
-
-import jakarta.persistence.EntityNotFoundException;
+import com.jr.todo.util.UserValidationHelper;
 
 @Service
 public class UserService implements IUserService {
 
+  private final UserValidationHelper userValidation;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
 
-  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+  public UserService(UserValidationHelper userValidation, UserRepository userRepository,
+      PasswordEncoder passwordEncoder) {
+    this.userValidation = userValidation;
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
   }
@@ -25,16 +27,21 @@ public class UserService implements IUserService {
   public UserResponseDto createUser(UserCreateDto userDto) {
     String username = userDto.username().strip();
     String email = userDto.email().strip();
-    validateInformation(username, email);
+
+    userValidation.validateUsername(username);
+    userValidation.validateEmail(email);
+
     User user = userDto.toEntity();
     user.setUsername(username);
     user.setPassword(passwordEncoder.encode(userDto.password()));
+    user.setEnabled(false);
     user.setRegistrationDte(LocalDate.now());
+
     return UserResponseDto.toDto(userRepository.save(user));
   }
 
   public void updatePasswod(Long id, String oldPassword, String newPassword) {
-    User user = findUserById(id);
+    User user = userValidation.findUserById(id);
 
     if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
       throw new IllegalArgumentException("Error de validacion de contraseña");
@@ -44,28 +51,13 @@ public class UserService implements IUserService {
   }
 
   public void updateEnable(Long id, boolean enable) {
-    User user = findUserById(id);
+    User user = userValidation.findUserById(id);
 
-    if (user.isEnable() == enable) {
+    if (user.isEnabled() == enable) {
       throw new IllegalArgumentException(" El usuario ya se encuentra desactivado");
     }
-    user.setEnable(enable);
+    user.setEnabled(enable);
     userRepository.save(user);
   }
 
-  // helpers
-  private void validateInformation(String name, String email) {
-    if (userRepository.existsByName(name)) {
-      throw new IllegalArgumentException("username ya registrado");
-    }
-    if (userRepository.existByEmail(email)) {
-      throw new IllegalArgumentException("El Email ya esta registrado");
-    }
-  }
-
-  private User findUserById(Long id) {
-    User user = userRepository.findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-    return user;
-  }
 }

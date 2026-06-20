@@ -12,7 +12,7 @@ import com.jr.todo.entity.enums.Role;
 import com.jr.todo.repository.UserRepository;
 import com.jr.todo.service.IAuthService;
 import com.jr.todo.service.IJwtService;
-
+import com.jr.todo.util.UserValidationHelper;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -22,16 +22,15 @@ public class AuthService implements IAuthService {
   private final IJwtService jwtService;
   private final PasswordEncoder passwordEncoder;
   private final TokenBlacklistService tokenBlacklistService;
+  private final UserValidationHelper userValidation;
 
-  public AuthService(
-      UserRepository userRepository,
-      PasswordEncoder passwordEncoder,
-      JwtService jwtService,
-      TokenBlacklistService tokenBlacklistService) {
+  public AuthService(UserRepository userRepository, IJwtService jwtService, PasswordEncoder passwordEncoder,
+      TokenBlacklistService tokenBlacklistService, UserValidationHelper userValidation) {
     this.userRepository = userRepository;
-    this.passwordEncoder = passwordEncoder;
     this.jwtService = jwtService;
+    this.passwordEncoder = passwordEncoder;
     this.tokenBlacklistService = tokenBlacklistService;
+    this.userValidation = userValidation;
   }
 
   public AuthResponse login(AuthRequest request) {
@@ -42,14 +41,17 @@ public class AuthService implements IAuthService {
   }
 
   public AuthResponse register(UserCreateDto request) {
-
     String username = request.username().strip();
     String email = request.email().strip();
-    validateInformation(username, email);
+
+    userValidation.validateUsername(username);
+    userValidation.validateEmail(email);
+
     User user = request.toEntity();
     user.setUsername(username);
     user.setPassword(passwordEncoder.encode(request.password()));
     user.setRole(Role.USER);
+    user.setEnabled(false);
     user.setRegistrationDte(LocalDate.now());
     userRepository.save(user);
 
@@ -64,15 +66,6 @@ public class AuthService implements IAuthService {
   }
 
   // helpers
-  private void validateInformation(String name, String email) {
-    if (userRepository.existsByName(name)) {
-      throw new IllegalArgumentException("username ya registrado");
-    }
-    if (userRepository.existByEmail(email)) {
-      throw new IllegalArgumentException("El Email ya esta registrado");
-    }
-  }
-
   private User findByEmail(String email) {
     User user = userRepository.findByEmail(email)
         .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
