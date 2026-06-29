@@ -48,7 +48,6 @@ public class AuthService implements IAuthService {
     validatePassword(request.password(), user.getPassword());
 
     isEnabledUser(user);
-
     return new AuthResponse(jwtService.getToken(user));
   }
 
@@ -127,7 +126,7 @@ public class AuthService implements IAuthService {
     emailDto.setRecipient(user.getEmail());
     emailDto.setSubject("Activacion de cuenta");
     emailDto.setUserName(user.getUsername());
-    emailDto.setActivationUrl("http://localhost:8080/auth/activation?token=" + token);
+    emailDto.setActivationUrl("http://localhost:8081/auth/activation?token=" + token);
     emailDto.setExpirationHours("24");
     emailDto.setCurrentYear(String.valueOf(LocalDate.now().getYear()));
     return emailDto;
@@ -140,7 +139,7 @@ public class AuthService implements IAuthService {
   }
 
   private void isEnabledUser(User user) {
-    if (!user.isEnabled()) {
+    if (!userRepository.isUserEnabled(user.getEmail())) {
       throw new IllegalAccessError("Usuario inactivo, confirme cuenta mediante email");
     }
   }
