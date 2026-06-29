@@ -1,4 +1,4 @@
-package com.jr.todo.dto;
+package com.jr.todo.modules.user.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
