@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.jr.todo.dto.AuthRequest;
+import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.modules.auth.service.IAuthService;
-import com.jr.todo.modules.user.dto.AuthRequest;
-import com.jr.todo.modules.user.dto.UserCreateDto;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController

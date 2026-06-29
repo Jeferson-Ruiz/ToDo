@@ -3,7 +3,7 @@ package com.jr.todo.modules.user.service;
 import java.time.LocalDate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.jr.todo.modules.user.dto.UserCreateDto;
+import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.modules.user.dto.UserResponseDto;
 import com.jr.todo.modules.user.entity.User;
 import com.jr.todo.modules.user.repository.UserRepository;

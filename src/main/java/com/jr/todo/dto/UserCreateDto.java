@@ -1,4 +1,4 @@
-package com.jr.todo.modules.user.dto;
+package com.jr.todo.dto;
 
 import com.jr.todo.modules.user.entity.User;
 

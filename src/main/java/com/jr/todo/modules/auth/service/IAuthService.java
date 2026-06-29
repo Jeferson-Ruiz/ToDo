@@ -1,8 +1,8 @@
 package com.jr.todo.modules.auth.service;
 
-import com.jr.todo.modules.user.dto.AuthRequest;
-import com.jr.todo.modules.user.dto.AuthResponse;
-import com.jr.todo.modules.user.dto.UserCreateDto;
+import com.jr.todo.dto.AuthRequest;
+import com.jr.todo.dto.AuthResponse;
+import com.jr.todo.dto.UserCreateDto;
 
 public interface IAuthService {
   AuthResponse login(AuthRequest request);

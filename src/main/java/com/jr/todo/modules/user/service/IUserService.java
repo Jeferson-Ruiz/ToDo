@@ -1,6 +1,6 @@
 package com.jr.todo.modules.user.service;
 
-import com.jr.todo.modules.user.dto.UserCreateDto;
+import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.modules.user.dto.UserResponseDto;
 
 public interface IUserService {
