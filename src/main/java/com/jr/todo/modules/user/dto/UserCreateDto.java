@@ -17,7 +17,8 @@ public record UserCreateDto(
         this.email,
         this.username,
         this.password,
-        true,
+        false,
+        null,
         null,
         null);
   }
