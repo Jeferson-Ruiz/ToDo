@@ -1,9 +1,11 @@
 package com.jr.todo.modules.auth.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.jr.todo.modules.auth.service.IAuthService;
 import com.jr.todo.modules.user.dto.AuthRequest;
@@ -34,6 +36,12 @@ public class AuthController {
   public ResponseEntity<String> logout(HttpServletRequest request) {
     authService.logout(request.getHeader("AUTHORIZATION"));
     return ResponseEntity.ok("Sesión cerrada con exito");
+  }
+
+  @GetMapping("/activation")
+  public ResponseEntity<?> activationCount(@RequestParam String token) {
+    authService.activateAccount(token);
+    return ResponseEntity.ok("Cuenta Activada");
   }
 
 }
