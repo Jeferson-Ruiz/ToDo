@@ -9,6 +9,7 @@ public interface IAuthService {
 
   String register(UserCreateDto request);
 
-  public void logout(String authHeader);
+  void logout(String authHeader);
 
+  void activateAccount(String token);
 }
