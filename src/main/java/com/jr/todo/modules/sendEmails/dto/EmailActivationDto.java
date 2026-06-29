@@ -10,6 +10,6 @@ public class EmailActivationDto {
     private String subject;
     private String userName;
     private String activationUrl;
-    private Long expirationHours;
+    private String expirationHours;
     private String currentYear;
 }
