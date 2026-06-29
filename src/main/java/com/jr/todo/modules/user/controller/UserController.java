@@ -29,13 +29,13 @@ public class UserController {
 
   @PatchMapping("/update-password")
   public ResponseEntity<?> updatePassword(@RequestBody PasswordUpdateDto data) {
-    userService.updatePasswod(data.id(), data.oldPassword(), data.newPassword());
+    userService.updatePasswod(data.email(), data.oldPassword(), data.newPassword());
     return ResponseEntity.noContent().build();
   }
 
   @PatchMapping("/admin/update-enable")
   public ResponseEntity<?> updateEnable(@RequestBody EnableUpdateDto data) {
-    userService.updateEnable(data.id(), data.enable());
+    userService.updateEnable(data.email(), data.enable());
     return ResponseEntity.noContent().build();
   }
 }

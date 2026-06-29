@@ -7,22 +7,36 @@ import com.jr.todo.modules.user.dto.UserCreateDto;
 import com.jr.todo.modules.user.dto.UserResponseDto;
 import com.jr.todo.modules.user.entity.User;
 import com.jr.todo.modules.user.repository.UserRepository;
+import com.jr.todo.util.UserSearchMethods;
 import com.jr.todo.util.UserValidationHelper;
 
 @Service
 public class UserService implements IUserService {
 
   private final UserValidationHelper userValidation;
+  private final UserSearchMethods userSearchMethods;
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
 
-  public UserService(UserValidationHelper userValidation, UserRepository userRepository,
-      PasswordEncoder passwordEncoder) {
+  public UserService(UserValidationHelper userValidation, UserSearchMethods userSearchMethods,
+      UserRepository userRepository, PasswordEncoder passwordEncoder) {
     this.userValidation = userValidation;
+    this.userSearchMethods = userSearchMethods;
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
   }
 
+  public void updatePasswod(String email, String oldPassword, String newPassword) {
+    User user = userSearchMethods.findByEmail(email);
+
+    if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+      throw new IllegalArgumentException("Error de validacion de contraseña");
+    }
+    user.setPassword(passwordEncoder.encode(newPassword));
+    userRepository.save(user);
+  }
+
+  // Metodos de ADMIN
   public UserResponseDto createUser(UserCreateDto userDto) {
     String username = userDto.username().strip();
     String email = userDto.email().strip();
@@ -33,30 +47,23 @@ public class UserService implements IUserService {
     User user = userDto.toEntity();
     user.setUsername(username);
     user.setPassword(passwordEncoder.encode(userDto.password()));
-    user.setEnabled(false);
+    user.setEnabled(true);
     user.setRegistrationDte(LocalDate.now());
 
     return UserResponseDto.toDto(userRepository.save(user));
   }
 
-  public void updatePasswod(Long id, String oldPassword, String newPassword) {
-    User user = userValidation.findUserById(id);
+  public void updateEnable(String email, boolean enable) {
+    User user = userSearchMethods.findByEmail(email);
 
-    if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-      throw new IllegalArgumentException("Error de validacion de contraseña");
-    }
-    user.setPassword(passwordEncoder.encode(newPassword));
+    userValidation.isEnabled(email);
+
+    user.setEnabled(enable);
     userRepository.save(user);
   }
 
-  public void updateEnable(Long id, boolean enable) {
-    User user = userValidation.findUserById(id);
+  public void updateRole() {
 
-    if (user.isEnabled() == enable) {
-      throw new IllegalArgumentException(" El usuario ya se encuentra desactivado");
-    }
-    user.setEnabled(enable);
-    userRepository.save(user);
   }
 
 }

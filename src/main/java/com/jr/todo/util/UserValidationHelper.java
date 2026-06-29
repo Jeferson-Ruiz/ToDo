@@ -1,9 +1,7 @@
 package com.jr.todo.util;
 
 import org.springframework.stereotype.Component;
-import com.jr.todo.modules.user.entity.User;
 import com.jr.todo.modules.user.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 
 @Component
 public class UserValidationHelper {
@@ -25,9 +23,9 @@ public class UserValidationHelper {
         }
     }
 
-    public User findUserById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-        return user;
+    public void isEnabled(String email) {
+        if (!userRepository.isUserEnabled(email)) {
+            throw new IllegalAccessError("Usuario desactivado, validar mediante emial");
+        }
     }
 }

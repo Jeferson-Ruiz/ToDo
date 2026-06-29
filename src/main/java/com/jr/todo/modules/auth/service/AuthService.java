@@ -16,6 +16,7 @@ import com.jr.todo.modules.user.dto.AuthResponse;
 import com.jr.todo.modules.user.dto.UserCreateDto;
 import com.jr.todo.modules.user.entity.User;
 import com.jr.todo.modules.user.repository.UserRepository;
+import com.jr.todo.util.UserSearchMethods;
 import com.jr.todo.util.UserValidationHelper;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,26 +29,29 @@ public class AuthService implements IAuthService {
   private final PasswordEncoder passwordEncoder;
   private final TokenBlacklistService tokenBlacklistService;
   private final UserValidationHelper userValidation;
+  private final UserSearchMethods userSearchMethods;
   private final AccountActivationTokenRepository activationTokenRepository;
   private final IEmailService emailService;
 
   public AuthService(UserRepository userRepository, IJwtService jwtService, PasswordEncoder passwordEncoder,
       TokenBlacklistService tokenBlacklistService, UserValidationHelper userValidation,
-      AccountActivationTokenRepository activationTokenRepository, IEmailService emailService) {
+      UserSearchMethods userSearchMethods, AccountActivationTokenRepository activationTokenRepository,
+      IEmailService emailService) {
     this.userRepository = userRepository;
     this.jwtService = jwtService;
     this.passwordEncoder = passwordEncoder;
     this.tokenBlacklistService = tokenBlacklistService;
     this.userValidation = userValidation;
+    this.userSearchMethods = userSearchMethods;
     this.activationTokenRepository = activationTokenRepository;
     this.emailService = emailService;
   }
 
   public AuthResponse login(AuthRequest request) {
-    User user = findByEmail(request.email());
+    User user = userSearchMethods.findByEmail(request.email());
     validatePassword(request.password(), user.getPassword());
 
-    isEnabledUser(user);
+    userValidation.isEnabled(request.email());
     return new AuthResponse(jwtService.getToken(user));
   }
 
@@ -130,18 +134,6 @@ public class AuthService implements IAuthService {
     emailDto.setExpirationHours("24");
     emailDto.setCurrentYear(String.valueOf(LocalDate.now().getYear()));
     return emailDto;
-  }
-
-  private User findByEmail(String email) {
-    User user = userRepository.findByEmail(email)
-        .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-    return user;
-  }
-
-  private void isEnabledUser(User user) {
-    if (!userRepository.isUserEnabled(user.getEmail())) {
-      throw new IllegalAccessError("Usuario inactivo, confirme cuenta mediante email");
-    }
   }
 
   private void validatePassword(String password, String encodedPassword) {

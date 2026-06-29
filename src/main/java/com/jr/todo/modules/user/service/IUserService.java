@@ -7,8 +7,8 @@ public interface IUserService {
 
   UserResponseDto createUser(UserCreateDto userDto);
 
-  void updatePasswod(Long id, String oldPassword, String newPassword);
+  void updatePasswod(String email, String oldPassword, String newPassword);
 
-  void updateEnable(Long id, boolean enable);
+  void updateEnable(String email, boolean enable);
 
 }

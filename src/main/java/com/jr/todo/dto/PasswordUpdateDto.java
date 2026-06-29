@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record PasswordUpdateDto(
-    @NotNull Long id,
-    @NotBlank String oldPassword,
-    @NotBlank String newPassword) {
+        @NotNull String email,
+        @NotBlank String oldPassword,
+        @NotBlank String newPassword) {
 }
