@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.jr.todo.dto.UserCreateDto;
+import com.jr.todo.enums.Role;
 import com.jr.todo.modules.user.dto.UserResponseDto;
 import com.jr.todo.modules.user.entity.User;
 import com.jr.todo.modules.user.repository.UserRepository;
@@ -26,6 +27,7 @@ public class UserService implements IUserService {
     this.passwordEncoder = passwordEncoder;
   }
 
+  @Override
   public void updatePasswod(String email, String oldPassword, String newPassword) {
     User user = userSearchMethods.findByEmail(email);
 
@@ -37,6 +39,7 @@ public class UserService implements IUserService {
   }
 
   // Metodos de ADMIN
+  @Override
   public UserResponseDto createUser(UserCreateDto userDto) {
     String username = userDto.username().strip();
     String email = userDto.email().strip();
@@ -62,8 +65,11 @@ public class UserService implements IUserService {
     userRepository.save(user);
   }
 
-  public void updateRole() {
-
+  @Override
+  public void updateRole(String email, Role role) {
+    User user = userSearchMethods.findByEmail(email);
+    user.setRole(role);
+    userRepository.save(user);
   }
 
 }
