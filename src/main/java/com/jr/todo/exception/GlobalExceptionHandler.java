@@ -21,4 +21,11 @@ public class GlobalExceptionHandler {
   public Map<String, String> handleEntityNotFound(EntityNotFoundException ex) {
     return Map.of("Error", ex.getMessage());
   }
+
+  @ExceptionHandler(IllegalAccessError.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public Map<String, String> illegalAccessError(IllegalAccessError ex) {
+    return Map.of("Error", ex.getMessage());
+  }
+
 }
