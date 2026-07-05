@@ -40,6 +40,7 @@ public class SendActivationEmail {
         accountActivationToken.setExpiresAt(LocalDateTime.now().plusHours(24));
         accountActivationToken.setUsed(false);
         activationTokenRepository.save(accountActivationToken);
+        user.setAccountActivationToken(accountActivationToken);
         return token;
     }
 

@@ -17,6 +17,7 @@ import com.jr.todo.modules.user.repository.UserRepository;
 import com.jr.todo.util.UserSearchMethods;
 import com.jr.todo.util.UserValidationHelper;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService implements IAuthService {
@@ -98,6 +99,21 @@ public class AuthService implements IAuthService {
 
     activationToken.setUsed(true);
     accountActivationTokenRepository.save(activationToken);
+  }
+
+  @Override
+  @Transactional
+  public String resendActivationEmail(UserCreateDto userRequest) {
+    User user = userSearchMethods.findByEmail(userRequest.email());
+
+    if (userRepository.isUserEnabled(user.getEmail())) {
+      throw new IllegalStateException("La cuenta ya esta activada");
+    }
+    accountActivationTokenRepository.findByUser(user).ifPresent(
+        accountActivationTokenRepository::delete);
+    sendActivationEmail.sendActivationEmail(user);
+
+    return "Email enviado con exito";
   }
 
   // helpers

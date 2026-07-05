@@ -33,6 +33,11 @@ public class AuthController {
     return ResponseEntity.ok(authService.register(request));
   }
 
+  @PostMapping("/resendemail")
+  public ResponseEntity<?> resendEmail(@RequestBody UserCreateDto request) {
+    return ResponseEntity.ok(authService.resendActivationEmail(request));
+  }
+
   @PostMapping("/logouth")
   public ResponseEntity<String> logout(HttpServletRequest request) {
     authService.logout(request.getHeader("AUTHORIZATION"));

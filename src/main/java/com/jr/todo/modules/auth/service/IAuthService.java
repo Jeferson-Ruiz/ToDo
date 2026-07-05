@@ -9,6 +9,8 @@ public interface IAuthService {
 
   String register(UserCreateDto request);
 
+  String resendActivationEmail(UserCreateDto userRequest);
+
   void logout(String authHeader);
 
   void activateAccount(String token);
