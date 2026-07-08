@@ -20,6 +20,7 @@ public record UserCreateDto(
         false,
         null,
         null,
+        null,
         null);
   }
 }
