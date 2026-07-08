@@ -1,8 +1,9 @@
 package com.jr.todo.modules.sendEmails.service;
 
-import com.jr.todo.modules.sendEmails.dto.EmailActivationDto;
+import java.util.Map;
 import jakarta.mail.MessagingException;
 
 public interface IEmailService {
-    void sendEmail(EmailActivationDto email) throws MessagingException;
+    void sendEmail(String recipient, String subject, String templateName, Map<String, Object> variables)
+            throws MessagingException;
 }
