@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jr.todo.dto.AuthRequest;
 import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.modules.auth.service.IAuthService;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
@@ -42,6 +41,12 @@ public class AuthController {
   public ResponseEntity<String> logout(HttpServletRequest request) {
     authService.logout(request.getHeader("AUTHORIZATION"));
     return ResponseEntity.ok("Sesión cerrada con exito");
+  }
+
+  @PostMapping("/recovery")
+  public ResponseEntity<?> initiateRecovery(@RequestBody String email) {
+    authService.initiateRecovery(email);
+    return ResponseEntity.ok("Email de recuperación enviado");
   }
 
   @GetMapping("/activation")
