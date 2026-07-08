@@ -2,6 +2,8 @@ package com.jr.todo.modules.auth.helpers;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Component;
 import com.jr.todo.modules.auth.entity.AccountActivationToken;
@@ -25,8 +27,15 @@ public class SendActivationEmail {
     public void sendActivationEmail(User user) {
         String token = generateActivationToken(user);
         EmailActivationDto emailDto = buildEmail(user, token);
+
         try {
-            emailService.sendEmail(emailDto);
+            Map<String, Object> variables = new HashMap<>();
+            variables.put("username", emailDto.getUserName());
+            variables.put("activationUrl", emailDto.getActivationUrl());
+            variables.put("expirationHours", emailDto.getExpirationHours());
+            variables.put("currentYear", emailDto.getCurrentYear());
+
+            emailService.sendEmail(emailDto.getRecipient(), emailDto.getSubject(), "ActivationEmail", variables);
         } catch (MessagingException e) {
             throw new RuntimeException("Error al enviar el email de activación", e);
         }
