@@ -1,11 +1,11 @@
-package com.jr.todo.modules.sendEmails.dto;
+package com.jr.todo.modules.auth.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class EmailActivationDto {
+public class SendEmail {
     private String recipient;
     private String subject;
     private String userName;

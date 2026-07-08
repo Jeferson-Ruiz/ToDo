@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Component;
+import com.jr.todo.modules.auth.dto.SendEmail;
 import com.jr.todo.modules.auth.entity.AccountActivationToken;
 import com.jr.todo.modules.auth.repository.AccountActivationTokenRepository;
-import com.jr.todo.modules.sendEmails.dto.EmailActivationDto;
 import com.jr.todo.modules.sendEmails.service.IEmailService;
 import com.jr.todo.modules.user.entity.User;
 import jakarta.mail.MessagingException;
@@ -26,7 +26,7 @@ public class SendActivationEmail {
 
     public void sendActivationEmail(User user) {
         String token = generateActivationToken(user);
-        EmailActivationDto emailDto = buildEmail(user, token);
+        SendEmail emailDto = buildEmail(user, token);
 
         try {
             Map<String, Object> variables = new HashMap<>();
@@ -53,8 +53,8 @@ public class SendActivationEmail {
         return token;
     }
 
-    private EmailActivationDto buildEmail(User user, String token) {
-        EmailActivationDto emailDto = new EmailActivationDto();
+    private SendEmail buildEmail(User user, String token) {
+        SendEmail emailDto = new SendEmail();
         emailDto.setRecipient(user.getEmail());
         emailDto.setSubject("Activacion de cuenta");
         emailDto.setUserName(user.getUsername());
