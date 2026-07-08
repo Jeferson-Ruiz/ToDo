@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.jr.todo.enums.Role;
 import com.jr.todo.modules.auth.entity.AccountActivationToken;
+import com.jr.todo.modules.auth.entity.AccountRecoveryToken;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -64,6 +65,9 @@ public class User implements UserDetails {
 
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private AccountActivationToken accountActivationToken;
+
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private AccountRecoveryToken accountRecoveryToken;
 
   // Metodos de interaz UserDetails
   @Override
