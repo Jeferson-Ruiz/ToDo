@@ -1,4 +1,4 @@
-package com.jr.todo.modules.task.dto;
+package com.jr.todo.modules.user.dto;
 
 public record EnableUpdateDto(
                 String email,

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jr.todo.dto.UserCreateDto;
-import com.jr.todo.modules.task.dto.EnableUpdateDto;
+import com.jr.todo.modules.user.dto.EnableUpdateDto;
 import com.jr.todo.modules.user.dto.PasswordUpdateDto;
 import com.jr.todo.modules.user.dto.UpdateRoleDto;
 import com.jr.todo.modules.user.dto.UserResponseDto;

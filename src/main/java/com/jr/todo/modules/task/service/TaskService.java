@@ -11,17 +11,17 @@ import com.jr.todo.modules.task.dto.TaskDto;
 import com.jr.todo.modules.task.entity.Task;
 import com.jr.todo.modules.task.enums.Priority;
 import com.jr.todo.modules.task.enums.Status;
-import com.jr.todo.modules.task.repository.TaskRepositoy;
+import com.jr.todo.modules.task.repository.TaskRepository;
 import com.jr.todo.util.TextFormat;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class TaskService implements ITaskService {
-  private final TaskRepositoy taskRepositoy;
+  private final TaskRepository taskRepository;
   private final CategoryRepository categoryRepository;
 
-  private TaskService(TaskRepositoy taskRepositoy, CategoryRepository categoryRepository) {
-    this.taskRepositoy = taskRepositoy;
+  private TaskService(TaskRepository taskRepository, CategoryRepository categoryRepository) {
+    this.taskRepository = taskRepository;
     this.categoryRepository = categoryRepository;
   }
 
@@ -31,7 +31,7 @@ public class TaskService implements ITaskService {
   public TaskDto createTask(TaskDto taskDto) {
 
     // Tarea unica
-    if (taskRepositoy.existByName(taskDto.name())) {
+    if (taskRepository.existByName(taskDto.name())) {
       throw new IllegalArgumentException("Tarea repetida");
     }
 
@@ -45,7 +45,7 @@ public class TaskService implements ITaskService {
     task.setName(TextFormat.nameFormat(task.getName()));
 
     task.setCategory(category);
-    Task saveTask = taskRepositoy.save(task);
+    Task saveTask = taskRepository.save(task);
     saveTask.setDateCreation(LocalDateTime.now());
     return TaskDto.toDto(saveTask);
   }
@@ -54,13 +54,13 @@ public class TaskService implements ITaskService {
   Find
   ----------------------*/
   public List<TaskDto> getAllTaks() {
-    List<Task> tasks = taskRepositoy.findAll();
+    List<Task> tasks = taskRepository.findAll();
     return mapToDto(tasks);
   }
 
   public List<TaskDto> getAllByCategory(String name) {
     String findName = TextFormat.nameFormat(name);
-    List<Task> tasks = taskRepositoy.findAllByCategory(findName);
+    List<Task> tasks = taskRepository.findAllByCategory(findName);
     return mapToDto(tasks);
   }
 
@@ -70,17 +70,17 @@ public class TaskService implements ITaskService {
   }
 
   public List<TaskDto> getAllTaskByDate(LocalDateTime date) {
-    List<Task> tasks = taskRepositoy.findTasksByDate(date);
+    List<Task> tasks = taskRepository.findTasksByDate(date);
     return mapToDto(tasks);
   }
 
   public List<TaskDto> getAllTaskByStatus(Status status) {
-    List<Task> tasks = taskRepositoy.findTasksByStatus(status);
+    List<Task> tasks = taskRepository.findTasksByStatus(status);
     return mapToDto(tasks);
   }
 
   public List<TaskDto> getAllTaskByPriority(Priority priority) {
-    List<Task> tasks = taskRepositoy.findTasksByPriority(priority);
+    List<Task> tasks = taskRepository.findTasksByPriority(priority);
     return mapToDto(tasks);
   }
 
@@ -90,39 +90,39 @@ public class TaskService implements ITaskService {
   public void updateTaskName(Long id, String newName) {
     Task task = findTaskById(id);
     task.setName(newName);
-    taskRepositoy.save(task);
+    taskRepository.save(task);
   }
 
   public void updateTaskDescription(Long id, String newDescription) {
     Task task = findTaskById(id);
     task.setDescription(newDescription);
-    taskRepositoy.save(task);
+    taskRepository.save(task);
   }
 
   public void updateTaskStatus(Long id, Status status) {
     Task task = findTaskById(id);
     task.setStatus(status);
-    taskRepositoy.save(task);
+    taskRepository.save(task);
   }
 
   public void updateDeadline(Long id, LocalDateTime newDate) {
     Task task = findTaskById(id);
     validarFachas(newDate);
     task.setDeadline(newDate);
-    taskRepositoy.save(task);
+    taskRepository.save(task);
   }
 
   public void updatePriority(Long id, Priority priority) {
     Task task = findTaskById(id);
     task.setPriority(priority);
-    taskRepositoy.save(task);
+    taskRepository.save(task);
   }
 
   public void updateCategory(Long id, String name) {
     Task task = findTaskById(id);
     Category category = findCategoryByName(name);
     task.setCategory(category);
-    taskRepositoy.save(task);
+    taskRepository.save(task);
   }
 
   /*----------------------
@@ -130,20 +130,20 @@ public class TaskService implements ITaskService {
   ----------------------*/
   public void deleteTask(Long id) {
     Task task = findTaskById(id);
-    taskRepositoy.delete(task);
+    taskRepository.delete(task);
   }
 
   /*----------------------
   Helpers
   ----------------------*/
   private Task findTaskByName(String name) {
-    Task task = taskRepositoy.findTaskByName(name)
+    Task task = taskRepository.findTaskByName(name)
         .orElseThrow(() -> new EntityNotFoundException("No se encontro tarea"));
     return task;
   }
 
   private Task findTaskById(Long id) {
-    Task task = taskRepositoy.findById(id)
+    Task task = taskRepository.findById(id)
         .orElseThrow(() -> new EntityNotFoundException("Tarea no Encontrada"));
     return task;
   }

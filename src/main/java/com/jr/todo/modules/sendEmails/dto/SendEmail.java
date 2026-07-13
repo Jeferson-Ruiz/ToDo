@@ -1,4 +1,4 @@
-package com.jr.todo.modules.auth.dto;
+package com.jr.todo.modules.sendEmails.dto;
 
 import lombok.Getter;
 import lombok.Setter;

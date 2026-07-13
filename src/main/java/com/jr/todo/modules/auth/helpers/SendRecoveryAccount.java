@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
-import com.jr.todo.modules.auth.dto.SendEmail;
+import com.jr.todo.modules.sendEmails.dto.SendEmail;
 import com.jr.todo.modules.auth.entity.AccountRecoveryToken;
 import com.jr.todo.modules.auth.repository.AccountRecoveryTokenRepository;
 import com.jr.todo.modules.sendEmails.service.IEmailService;

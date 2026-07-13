@@ -11,7 +11,7 @@ import com.jr.todo.modules.task.entity.Task;
 import com.jr.todo.modules.task.enums.Priority;
 import com.jr.todo.modules.task.enums.Status;
 
-public interface TaskRepositoy extends JpaRepository<Task, Long> {
+public interface TaskRepository extends JpaRepository<Task, Long> {
 
   // Busqueda
   @Query("SELECT t FROM Task t WHERE t.name = :name")

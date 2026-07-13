@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.stereotype.Component;
-import com.jr.todo.modules.auth.dto.SendEmail;
+import com.jr.todo.modules.sendEmails.dto.SendEmail;
 import com.jr.todo.modules.auth.entity.AccountActivationToken;
 import com.jr.todo.modules.auth.repository.AccountActivationTokenRepository;
 import com.jr.todo.modules.sendEmails.service.IEmailService;

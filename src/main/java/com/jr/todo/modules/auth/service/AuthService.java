@@ -10,7 +10,6 @@ import com.jr.todo.dto.AuthResponse;
 import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.enums.Role;
 import com.jr.todo.modules.auth.entity.AccountActivationToken;
-import com.jr.todo.modules.auth.entity.AccountRecoveryToken;
 import com.jr.todo.modules.auth.helpers.SendActivationEmail;
 import com.jr.todo.modules.auth.helpers.SendRecoveryAccount;
 import com.jr.todo.modules.auth.repository.AccountActivationTokenRepository;
