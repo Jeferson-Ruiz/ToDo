@@ -28,4 +28,10 @@ public class GlobalExceptionHandler {
     return Map.of("Error", ex.getMessage());
   }
 
+  @ExceptionHandler(IllegalStateException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public Map<String, String> handleIllegalState(IllegalStateException ex) {
+    return Map.of("Error", ex.getMessage());
+  }
+
 }
