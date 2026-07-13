@@ -15,5 +15,4 @@ public interface IAuthService {
 
   void activateAccount(String token);
 
-  String initiateRecovery(String email);
 }

@@ -11,9 +11,7 @@ import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.enums.Role;
 import com.jr.todo.modules.auth.entity.AccountActivationToken;
 import com.jr.todo.modules.auth.helpers.SendActivationEmail;
-import com.jr.todo.modules.auth.helpers.SendRecoveryAccount;
 import com.jr.todo.modules.auth.repository.AccountActivationTokenRepository;
-import com.jr.todo.modules.auth.repository.AccountRecoveryTokenRepository;
 import com.jr.todo.modules.user.entity.User;
 import com.jr.todo.modules.user.repository.UserRepository;
 import com.jr.todo.util.UserSearchMethods;
@@ -31,15 +29,12 @@ public class AuthService implements IAuthService {
   private final UserValidationHelper userValidation;
   private final UserSearchMethods userSearchMethods;
   private final AccountActivationTokenRepository accountActivationTokenRepository;
-  private final AccountRecoveryTokenRepository accountRecoveryTokenRepository;
   private final SendActivationEmail sendActivationEmail;
-  private final SendRecoveryAccount sendRecoveryAccount;
 
   public AuthService(UserRepository userRepository, IJwtService jwtService, PasswordEncoder passwordEncoder,
       TokenBlacklistService tokenBlacklistService, UserValidationHelper userValidation,
       UserSearchMethods userSearchMethods, AccountActivationTokenRepository accountActivationTokenRepository,
-      AccountRecoveryTokenRepository accountRecoveryTokenRepository, SendActivationEmail sendActivationEmail,
-      SendRecoveryAccount sendRecoveryAccount) {
+      SendActivationEmail sendActivationEmail) {
     this.userRepository = userRepository;
     this.jwtService = jwtService;
     this.passwordEncoder = passwordEncoder;
@@ -47,9 +42,7 @@ public class AuthService implements IAuthService {
     this.userValidation = userValidation;
     this.userSearchMethods = userSearchMethods;
     this.accountActivationTokenRepository = accountActivationTokenRepository;
-    this.accountRecoveryTokenRepository = accountRecoveryTokenRepository;
     this.sendActivationEmail = sendActivationEmail;
-    this.sendRecoveryAccount = sendRecoveryAccount;
   }
 
   public AuthResponse login(AuthRequest request) {
@@ -121,15 +114,6 @@ public class AuthService implements IAuthService {
     sendActivationEmail.sendActivationEmail(user);
 
     return "Email enviado con exito";
-  }
-
-  @Override
-  public String initiateRecovery(String email) {
-    User user = userSearchMethods.findByEmail(email);
-    accountRecoveryTokenRepository.findByUser(user).ifPresent(accountRecoveryTokenRepository::delete);
-    sendRecoveryAccount.sendEmailActivation(user);
-
-    return "Email de recuperación enviado";
   }
 
   // helpers
