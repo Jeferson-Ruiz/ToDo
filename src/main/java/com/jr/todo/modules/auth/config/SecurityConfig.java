@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import com.jr.todo.modules.auth.jwtAuth.JwtAuthenticationFilter;
 
 @Configuration
@@ -29,7 +28,7 @@ public class SecurityConfig {
     return http
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(authRequest -> authRequest
-            .requestMatchers("/auth/**").permitAll()
+            .requestMatchers("/auth/**", "/recovery/**").permitAll()
             .requestMatchers(HttpMethod.POST, "/user/create").hasRole("ADMIN")
             .anyRequest().authenticated())
         .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
