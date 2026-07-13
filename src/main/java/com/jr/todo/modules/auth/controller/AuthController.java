@@ -43,12 +43,6 @@ public class AuthController {
     return ResponseEntity.ok("Sesión cerrada con exito");
   }
 
-  @PostMapping("/recovery")
-  public ResponseEntity<?> initiateRecovery(@RequestBody String email) {
-    authService.initiateRecovery(email);
-    return ResponseEntity.ok("Email de recuperación enviado");
-  }
-
   @GetMapping("/activation")
   public ResponseEntity<?> activationCount(@RequestParam String token) {
     authService.activateAccount(token);
