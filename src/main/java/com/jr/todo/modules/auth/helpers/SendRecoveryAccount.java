@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
 import org.springframework.stereotype.Component;
 import com.jr.todo.modules.sendEmails.dto.SendEmail;
 import com.jr.todo.modules.auth.entity.AccountRecoveryToken;
@@ -61,7 +60,7 @@ public class SendRecoveryAccount {
         emailDto.setRecipient(user.getEmail());
         emailDto.setSubject("Recuperacion de Cuenta");
         emailDto.setUserName(user.getUsername());
-        emailDto.setActivationUrl("http://localhost:8081/auth/recoveryform?token=" + token);
+        emailDto.setActivationUrl("http://localhost:8081/recovery/recoveryform?token=" + token);
         emailDto.setExpirationHours("2");
         emailDto.setCurrentYear(String.valueOf(LocalDate.now().getYear()));
         return emailDto;
