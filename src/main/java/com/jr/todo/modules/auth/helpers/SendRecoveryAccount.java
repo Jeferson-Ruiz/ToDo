@@ -5,64 +5,41 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import org.springframework.stereotype.Component;
-import com.jr.todo.modules.sendEmails.dto.SendEmail;
+import org.springframework.stereotype.Service;
 import com.jr.todo.modules.auth.entity.AccountRecoveryToken;
 import com.jr.todo.modules.auth.repository.AccountRecoveryTokenRepository;
-import com.jr.todo.modules.sendEmails.service.IEmailService;
 import com.jr.todo.modules.user.entity.User;
-import jakarta.mail.MessagingException;
 
-@Component
+@Service
 public class SendRecoveryAccount {
 
-    private final IEmailService emailService;
     private final AccountRecoveryTokenRepository accountRecoveryTokenRepository;
+    private final EmailTemplateSender emailSender;
 
-    public SendRecoveryAccount(IEmailService emailService,
-            AccountRecoveryTokenRepository accountRecoveryTokenRepository) {
-        this.emailService = emailService;
+    public SendRecoveryAccount(AccountRecoveryTokenRepository accountRecoveryTokenRepository,
+            EmailTemplateSender emailSender) {
         this.accountRecoveryTokenRepository = accountRecoveryTokenRepository;
+        this.emailSender = emailSender;
     }
 
     public void sendEmailActivation(User user) {
-        String token = generateActivationToken(user);
-        SendEmail sendEmail = buildEmail(user, token);
-
-        try {
-            Map<String, Object> variables = new HashMap<>();
-            variables.put("userName", sendEmail.getUserName());
-            variables.put("formUrl", sendEmail.getActivationUrl());
-            variables.put("expirationHours", sendEmail.getExpirationHours());
-            variables.put("currentYear", sendEmail.getCurrentYear());
-
-            emailService.sendEmail(sendEmail.getRecipient(), sendEmail.getSubject(), "AccountRecovery", variables);
-        } catch (MessagingException e) {
-            throw new RuntimeException("Error al enviar el email de activación", e);
-        }
-    }
-
-    private String generateActivationToken(User user) {
         String token = UUID.randomUUID().toString();
-        AccountRecoveryToken accountRecoveryToken = new AccountRecoveryToken();
-        accountRecoveryToken.setToken(token);
-        accountRecoveryToken.setUser(user);
-        accountRecoveryToken.setExpiresAt(LocalDateTime.now().plusHours(2));
-        accountRecoveryToken.setUsed(false);
-        accountRecoveryTokenRepository.save(accountRecoveryToken);
-        user.setAccountRecoveryToken(accountRecoveryToken);
-        return token;
+        AccountRecoveryToken recoveryToken = new AccountRecoveryToken();
+        recoveryToken.setToken(token);
+        recoveryToken.setUser(user);
+        recoveryToken.setExpiresAt(LocalDateTime.now().plusHours(2));
+        recoveryToken.setUsed(false);
 
-    }
+        accountRecoveryTokenRepository.save(recoveryToken);
+        user.setAccountRecoveryToken(recoveryToken);
 
-    private SendEmail buildEmail(User user, String token) {
-        SendEmail emailDto = new SendEmail();
-        emailDto.setRecipient(user.getEmail());
-        emailDto.setSubject("Recuperacion de Cuenta");
-        emailDto.setUserName(user.getUsername());
-        emailDto.setActivationUrl("http://localhost:8081/recovery/recoveryform?token=" + token);
-        emailDto.setExpirationHours("2");
-        emailDto.setCurrentYear(String.valueOf(LocalDate.now().getYear()));
-        return emailDto;
+        // variables
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("userName", user.getUsername());
+        variables.put("formUrl", "http://localhost:8081/recovery/recoveryform?token=" + token);
+        variables.put("expirationHours", "2");
+        variables.put("currentYear", String.valueOf(LocalDate.now().getYear()));
+
+        emailSender.send(user.getEmail(), "Recuperacion de Cuenta", "AccountRecovery", variables);
     }
 }
