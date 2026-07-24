@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.modules.user.dto.EnableUpdateDto;
+import com.jr.todo.modules.user.dto.PasswordUpdateAdminDto;
 import com.jr.todo.modules.user.dto.UpdateRoleDto;
 import com.jr.todo.modules.user.dto.UserResponseDto;
 import com.jr.todo.modules.user.service.IAdministrativeService;
@@ -39,4 +40,11 @@ public class AdmistrativeController {
         administrativeService.updateRole(data.email(), data.role());
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/update-password")
+    public ResponseEntity<?> updatePassword(@RequestBody PasswordUpdateAdminDto request) {
+        administrativeService.updatePassword(request.email(), request.password());
+        return ResponseEntity.noContent().build();
+    }
+
 }
