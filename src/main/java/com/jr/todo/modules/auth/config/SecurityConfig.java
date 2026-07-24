@@ -2,7 +2,6 @@ package com.jr.todo.modules.auth.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,7 +28,7 @@ public class SecurityConfig {
         .csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(authRequest -> authRequest
             .requestMatchers("/auth/**", "/recovery/**").permitAll()
-            .requestMatchers(HttpMethod.POST, "/user/create").hasRole("ADMIN")
+            .requestMatchers("/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated())
         .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authenticationProvider(authProvider)
