@@ -1,11 +1,11 @@
 package com.jr.todo.util;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import com.jr.todo.modules.user.entity.User;
 import com.jr.todo.modules.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
-@Component
+@Service
 public class UserSearchMethods {
 
     private final UserRepository userRepository;
