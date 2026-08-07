@@ -1,4 +1,4 @@
-package com.jr.todo;
+package com.jr.todo.utils;
 
 import org.junit.jupiter.api.Test;
 import com.jr.todo.util.TextFormat;
