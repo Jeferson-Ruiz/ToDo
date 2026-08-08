@@ -6,16 +6,20 @@ import org.springframework.stereotype.Service;
 import com.jr.todo.modules.category.dto.CategoryDto;
 import com.jr.todo.modules.category.entity.Category;
 import com.jr.todo.modules.category.repository.CategoryRepository;
+import com.jr.todo.modules.task.repository.TaskRepository;
 import com.jr.todo.util.TextFormat;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class CategoryService implements ICategoryService {
 
   private final CategoryRepository categoryRepository;
+  private final TaskRepository taskRepository;
 
-  public CategoryService(CategoryRepository categoryRepository) {
+  public CategoryService(CategoryRepository categoryRepository, TaskRepository taskRepository) {
     this.categoryRepository = categoryRepository;
+    this.taskRepository = taskRepository;
   }
 
   @Override
@@ -58,10 +62,12 @@ public class CategoryService implements ICategoryService {
     categoryRepository.save(category);
   }
 
+  @Transactional
   @Override
   public void delete(Long id) {
-    Category category = findById(id);
-    categoryRepository.delete(category);
+    findById(id);
+    taskRepository.disassociateTasksByCategory(id);
+    categoryRepository.deleteById(id);
   }
 
   // helpers

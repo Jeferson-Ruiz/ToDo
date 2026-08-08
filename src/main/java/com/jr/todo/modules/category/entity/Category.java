@@ -37,6 +37,6 @@ public class Category {
 
   private LocalDateTime dateCreation;
 
-  @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "category", cascade = CascadeType.PERSIST)
   private List<Task> task = new ArrayList<>();
 }
