@@ -18,6 +18,7 @@ public class CategoryService implements ICategoryService {
     this.categoryRepository = categoryRepository;
   }
 
+  @Override
   public CategoryDto createCategory(CategoryDto categoryDto) {
     validateName(categoryDto.name());
 
