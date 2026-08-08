@@ -3,7 +3,9 @@ package com.jr.todo.modules.task.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -32,6 +34,10 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
   // Eliminar
   @Query("DELETE FROM Task t WHERE t.taskId = :id")
   public void deleteTask(@Param("taskId") Long id);
+
+  @Modifying
+  @Query("UPDATE Task t SET t.category = null WHERE t.category.id = :categoryId")
+  void disassociateTasksByCategory(@Param("categoryId") Long categoryId);
 
   // Validar
   @Query("SELECT COUNT(t)>0 FROM Task t WHERE t.name = :name")

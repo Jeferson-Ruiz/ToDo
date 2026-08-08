@@ -1,7 +1,6 @@
 package com.jr.todo.modules.task.entity;
 
 import java.time.LocalDateTime;
-
 import com.jr.todo.modules.category.entity.Category;
 import com.jr.todo.modules.task.enums.Priority;
 import com.jr.todo.modules.task.enums.Status;
@@ -46,7 +45,7 @@ public class Task {
 
   private Priority priority;
 
-  @ManyToOne
+  @ManyToOne(optional = true)
   @JoinColumn(name = "category_id")
   private Category category;
 }
