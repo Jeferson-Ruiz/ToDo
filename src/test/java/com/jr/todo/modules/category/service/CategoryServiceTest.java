@@ -2,6 +2,7 @@ package com.jr.todo.modules.category.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -18,10 +19,14 @@ import com.jr.todo.DataProvider;
 import com.jr.todo.modules.category.dto.CategoryDto;
 import com.jr.todo.modules.category.entity.Category;
 import com.jr.todo.modules.category.repository.CategoryRepository;
+import com.jr.todo.modules.task.repository.TaskRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 public class CategoryServiceTest {
+
+    @Mock
+    private TaskRepository taskRepository;
 
     @Mock
     private CategoryRepository categoryRepository;
@@ -109,6 +114,13 @@ public class CategoryServiceTest {
     }
 
     @Test
+    void testUpdateNameNotFound() {
+        Long id = 1L;
+        when(categoryRepository.findById(id)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> categoryService.updateName(id, "nuevo"));
+    }
+
+    @Test
     void testUpdateDescription() {
         Long id = 1L;
         String description = "Descripcion";
@@ -121,4 +133,34 @@ public class CategoryServiceTest {
         assertEquals("descripcion", captor.getValue().getDescription());
     }
 
+    @Test
+    void testUpdateDescriptionNotFound() {
+        Long id = 1L;
+        when(categoryRepository.findById(id)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> categoryService.updateDescription(id, "descripcion"));
+    }
+
+    @Test
+    void testDelete() {
+        Long id = 1L;
+        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(DataProvider.categoryMock()));
+        categoryService.delete(id);
+        verify(categoryRepository).deleteById(id);
+        verify(taskRepository).disassociateTasksByCategory(id);
+    }
+
+    @Test
+    void testDeleteNotFound() {
+        Long id = 1L;
+        when(categoryRepository.findById(id)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> categoryService.delete(id));
+        verify(categoryRepository, never()).deleteById(anyLong());
+    }
+
+    @Test
+    void testValidateName() {
+        when(categoryRepository.existByName(anyString())).thenReturn(true);
+        assertThrows(IllegalArgumentException.class,
+                () -> categoryService.createCategory(new CategoryDto("prueba", "descripcion")));
+    }
 }
