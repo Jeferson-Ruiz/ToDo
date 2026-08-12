@@ -3,6 +3,10 @@ package com.jr.todo.util;
 public class TextFormat {
 
   public static String nameFormat(String name) {
+    if (name == null || name.isBlank()) {
+      throw new IllegalArgumentException("Ingresar Texto");
+    }
+
     String editName = name.strip();
     StringBuilder newName = new StringBuilder();
     newName.append(editName.substring(0, 1).toUpperCase());
