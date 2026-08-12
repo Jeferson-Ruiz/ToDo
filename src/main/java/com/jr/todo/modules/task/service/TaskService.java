@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
-
 import com.jr.todo.modules.category.entity.Category;
 import com.jr.todo.modules.category.repository.CategoryRepository;
 import com.jr.todo.modules.task.dto.TaskDto;
@@ -14,13 +13,15 @@ import com.jr.todo.modules.task.enums.Status;
 import com.jr.todo.modules.task.repository.TaskRepository;
 import com.jr.todo.util.TextFormat;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
+@Transactional
 public class TaskService implements ITaskService {
   private final TaskRepository taskRepository;
   private final CategoryRepository categoryRepository;
 
-  private TaskService(TaskRepository taskRepository, CategoryRepository categoryRepository) {
+  public TaskService(TaskRepository taskRepository, CategoryRepository categoryRepository) {
     this.taskRepository = taskRepository;
     this.categoryRepository = categoryRepository;
   }
@@ -28,10 +29,12 @@ public class TaskService implements ITaskService {
   /*----------------------
   Crear
   ----------------------*/
+  @Override
   public TaskDto createTask(TaskDto taskDto) {
+    String taskName = TextFormat.nameFormat(taskDto.name());
 
     // Tarea unica
-    if (taskRepository.existByName(taskDto.name())) {
+    if (taskRepository.existByName(taskName)) {
       throw new IllegalArgumentException("Tarea repetida");
     }
 
@@ -42,43 +45,48 @@ public class TaskService implements ITaskService {
     Category category = taskDto.category() != null ? findCategoryByName(taskDto.category()) : null;
 
     Task task = taskDto.toEntity();
-    task.setName(TextFormat.nameFormat(task.getName()));
-
+    task.setName(taskName);
     task.setCategory(category);
+    task.setDateCreation(LocalDateTime.now());
     Task saveTask = taskRepository.save(task);
-    saveTask.setDateCreation(LocalDateTime.now());
     return TaskDto.toDto(saveTask);
   }
 
   /*----------------------
   Find
   ----------------------*/
+  @Override
   public List<TaskDto> getAllTaks() {
     List<Task> tasks = taskRepository.findAll();
     return mapToDto(tasks);
   }
 
+  @Override
   public List<TaskDto> getAllByCategory(String name) {
     String findName = TextFormat.nameFormat(name);
     List<Task> tasks = taskRepository.findAllByCategory(findName);
     return mapToDto(tasks);
   }
 
+  @Override
   public TaskDto getTaskByName(String name) {
     Task task = findTaskByName(name);
     return TaskDto.toDto(task);
   }
 
+  @Override
   public List<TaskDto> getAllTaskByDate(LocalDateTime date) {
     List<Task> tasks = taskRepository.findTasksByDate(date);
     return mapToDto(tasks);
   }
 
+  @Override
   public List<TaskDto> getAllTaskByStatus(Status status) {
     List<Task> tasks = taskRepository.findTasksByStatus(status);
     return mapToDto(tasks);
   }
 
+  @Override
   public List<TaskDto> getAllTaskByPriority(Priority priority) {
     List<Task> tasks = taskRepository.findTasksByPriority(priority);
     return mapToDto(tasks);
@@ -87,24 +95,28 @@ public class TaskService implements ITaskService {
   /*----------------------
   Update
   ----------------------*/
+  @Override
   public void updateTaskName(Long id, String newName) {
     Task task = findTaskById(id);
     task.setName(newName);
     taskRepository.save(task);
   }
 
+  @Override
   public void updateTaskDescription(Long id, String newDescription) {
     Task task = findTaskById(id);
     task.setDescription(newDescription);
     taskRepository.save(task);
   }
 
+  @Override
   public void updateTaskStatus(Long id, Status status) {
     Task task = findTaskById(id);
     task.setStatus(status);
     taskRepository.save(task);
   }
 
+  @Override
   public void updateDeadline(Long id, LocalDateTime newDate) {
     Task task = findTaskById(id);
     validarFachas(newDate);
@@ -112,12 +124,14 @@ public class TaskService implements ITaskService {
     taskRepository.save(task);
   }
 
+  @Override
   public void updatePriority(Long id, Priority priority) {
     Task task = findTaskById(id);
     task.setPriority(priority);
     taskRepository.save(task);
   }
 
+  @Override
   public void updateCategory(Long id, String name) {
     Task task = findTaskById(id);
     Category category = findCategoryByName(name);
@@ -128,6 +142,7 @@ public class TaskService implements ITaskService {
   /*----------------------
   Delete
   ----------------------*/
+  @Override
   public void deleteTask(Long id) {
     Task task = findTaskById(id);
     taskRepository.delete(task);
@@ -162,7 +177,7 @@ public class TaskService implements ITaskService {
   }
 
   private void validarFachas(LocalDateTime deadline) {
-    if (!deadline.isAfter(LocalDateTime.now())) {
+    if (deadline == null || !deadline.isAfter(LocalDateTime.now())) {
       throw new IllegalArgumentException("La fecha límite debe ser posterior a la fecha de creación");
     }
   }
