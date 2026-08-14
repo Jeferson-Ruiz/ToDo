@@ -38,9 +38,6 @@ public class TaskService implements ITaskService {
       throw new IllegalArgumentException("Tarea repetida");
     }
 
-    // Validar fechas
-    validarFachas(taskDto.deadline());
-
     // Buscar la categoría por nombre (solo si existe)
     Category category = taskDto.category() != null ? findCategoryByName(taskDto.category()) : null;
 
@@ -48,6 +45,9 @@ public class TaskService implements ITaskService {
     task.setName(taskName);
     task.setCategory(category);
     task.setDateCreation(LocalDateTime.now());
+
+    // validar fecha
+    validarFachas(task.getDateCreation(), taskDto.deadline());
     Task saveTask = taskRepository.save(task);
     return TaskDto.toDto(saveTask);
   }
@@ -119,7 +119,7 @@ public class TaskService implements ITaskService {
   @Override
   public void updateDeadline(Long id, LocalDateTime newDate) {
     Task task = findTaskById(id);
-    validarFachas(newDate);
+    validarFachas(task.getDateCreation(), newDate);
     task.setDeadline(newDate);
     taskRepository.save(task);
   }
@@ -176,9 +176,13 @@ public class TaskService implements ITaskService {
         .collect(Collectors.toList());
   }
 
-  private void validarFachas(LocalDateTime deadline) {
-    if (deadline == null || !deadline.isAfter(LocalDateTime.now())) {
-      throw new IllegalArgumentException("La fecha límite debe ser posterior a la fecha de creación");
+  private void validarFachas(LocalDateTime dateCreation, LocalDateTime deadline) {
+
+    if (deadline == null) {
+      return;
+    }
+    if (dateCreation.isAfter(deadline)) {
+      throw new IllegalArgumentException("La fecha de finalizacion no puede ser anterior a la de finalizacion");
     }
   }
 }
