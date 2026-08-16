@@ -70,7 +70,8 @@ public class TaskService implements ITaskService {
 
   @Override
   public TaskDto getTaskByName(String name) {
-    Task task = findTaskByName(name);
+    String nameNorma = TextFormat.nameFormat(name);
+    Task task = findTaskByName(nameNorma);
     return TaskDto.toDto(task);
   }
 
@@ -97,8 +98,9 @@ public class TaskService implements ITaskService {
   ----------------------*/
   @Override
   public void updateTaskName(Long id, String newName) {
+    String newNameNorma = TextFormat.nameFormat(newName);
     Task task = findTaskById(id);
-    task.setName(newName);
+    task.setName(newNameNorma);
     taskRepository.save(task);
   }
 
