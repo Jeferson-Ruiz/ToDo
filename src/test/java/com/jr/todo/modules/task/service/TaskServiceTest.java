@@ -17,7 +17,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import com.jr.todo.DataProvider;
+import com.jr.todo.DataProviderCategory;
 import com.jr.todo.DataProviderTask;
 import com.jr.todo.modules.category.repository.CategoryRepository;
 import com.jr.todo.modules.task.dto.TaskDto;
@@ -100,7 +100,7 @@ public class TaskServiceTest {
         TaskDto taskDto = new TaskDto("prueba", "prueba", Status.FINALIZADA, null, Priority.ALTA, "Trabajo");
 
         when(taskRepository.existByName(anyString())).thenReturn(false);
-        when(categoryRepository.findByName("Trabajo")).thenReturn(Optional.of(DataProvider.categoryMock()));
+        when(categoryRepository.findByName("Trabajo")).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
         when(taskRepository.save(any(Task.class))).thenAnswer(inv -> inv.getArgument(0));
 
         TaskDto result = taskService.createTask(taskDto);
@@ -338,7 +338,7 @@ public class TaskServiceTest {
         String category = "Trabajo";
 
         when(taskRepository.findById(anyLong())).thenReturn(Optional.of(DataProviderTask.taskMock()));
-        when(categoryRepository.findByName(category)).thenReturn(Optional.of(DataProvider.categoryMock()));
+        when(categoryRepository.findByName(category)).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
 
         taskService.updateCategory(id, category);
 
@@ -347,7 +347,7 @@ public class TaskServiceTest {
         verify(taskRepository).save(captor.capture());
         verify(categoryRepository).findByName(category);
 
-        assertEquals(DataProvider.categoryMock().getName(), captor.getValue().getCategory().getName());
+        assertEquals(DataProviderCategory.categoryMock().getName(), captor.getValue().getCategory().getName());
     }
 
     @Test

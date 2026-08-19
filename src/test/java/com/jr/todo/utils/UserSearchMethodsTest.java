@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import com.jr.todo.DataProvider;
+import com.jr.todo.DataProviderCategory;
 import com.jr.todo.modules.user.entity.User;
 import com.jr.todo.modules.user.repository.UserRepository;
 import com.jr.todo.util.UserSearchMethods;
@@ -27,7 +27,7 @@ public class UserSearchMethodsTest {
     @Test
     void testFindByEmail() {
         String email = "pedro@correo.com";
-        User expect = DataProvider.userMock();
+        User expect = DataProviderCategory.userMock();
 
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(expect));
         User current = userSearchMethods.findByEmail(email);

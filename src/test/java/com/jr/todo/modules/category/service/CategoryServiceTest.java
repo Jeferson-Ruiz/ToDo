@@ -1,4 +1,4 @@
-package com.jr.todo.modules.category.service;
+ package com.jr.todo.modules.category.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -15,7 +15,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import com.jr.todo.DataProvider;
+import com.jr.todo.DataProviderCategory;
 import com.jr.todo.modules.category.dto.CategoryDto;
 import com.jr.todo.modules.category.entity.Category;
 import com.jr.todo.modules.category.repository.CategoryRepository;
@@ -76,7 +76,7 @@ public class CategoryServiceTest {
 
     @Test
     void testFindAll() {
-        when(categoryRepository.findAll()).thenReturn(DataProvider.listCategoryDtosMock());
+        when(categoryRepository.findAll()).thenReturn(DataProviderCategory.listCategoryDtosMock());
         List<CategoryDto> result = categoryService.findAll();
 
         assertNotNull(result);
@@ -86,7 +86,7 @@ public class CategoryServiceTest {
 
     @Test
     void testFindByName() {
-        when(categoryRepository.findByName(anyString())).thenReturn(Optional.of(DataProvider.categoryMock()));
+        when(categoryRepository.findByName(anyString())).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
         CategoryDto result = categoryService.findByName(anyString());
 
         assertEquals("Compras", result.name());
@@ -104,7 +104,7 @@ public class CategoryServiceTest {
     @Test
     void testUpdateName() {
         Long id = 1L;
-        when(categoryRepository.findById(id)).thenReturn(Optional.of(DataProvider.categoryMock()));
+        when(categoryRepository.findById(id)).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
 
         categoryService.updateName(id, " eStuDiar ");
 
@@ -124,7 +124,7 @@ public class CategoryServiceTest {
     void testUpdateDescription() {
         Long id = 1L;
         String description = "Descripcion";
-        when(categoryRepository.findById(id)).thenReturn(Optional.of(DataProvider.categoryMock()));
+        when(categoryRepository.findById(id)).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
 
         categoryService.updateDescription(id, description);
 
@@ -143,7 +143,7 @@ public class CategoryServiceTest {
     @Test
     void testDelete() {
         Long id = 1L;
-        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(DataProvider.categoryMock()));
+        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
         categoryService.delete(id);
         verify(categoryRepository).deleteById(id);
         verify(taskRepository).disassociateTasksByCategory(id);

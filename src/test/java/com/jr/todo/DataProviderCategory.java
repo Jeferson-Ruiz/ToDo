@@ -7,7 +7,7 @@ import com.jr.todo.enums.Role;
 import com.jr.todo.modules.category.entity.Category;
 import com.jr.todo.modules.user.entity.User;
 
-public class DataProvider {
+public class DataProviderCategory {
 
     public static User userMock() {
         return new User(1L, "Pedro", "Pascal", "pedro@correo.com", "pedro",
