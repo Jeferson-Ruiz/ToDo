@@ -68,6 +68,7 @@ public class AdministrativeService implements IAdministrativeService {
 
         String savePassword = newPassword.strip();
         user.setPassword(passwordEncoder.encode(savePassword));
+        userRepository.save(user);
     }
 
 }
