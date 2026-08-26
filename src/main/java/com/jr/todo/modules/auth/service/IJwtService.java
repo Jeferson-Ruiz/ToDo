@@ -10,6 +10,8 @@ public interface IJwtService {
 
   String getUsernameFromToken(String token);
 
+  String getJtiFromToken(String token);
+
   boolean isTokenValid(String token, UserDetails userDetails);
 
   <T> T getClaim(String token, Function<Claims, T> claimsResolver);

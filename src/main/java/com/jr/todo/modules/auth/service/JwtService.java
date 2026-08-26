@@ -3,6 +3,7 @@ package com.jr.todo.modules.auth.service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +30,7 @@ public class JwtService implements IJwtService {
   private String getToken(Map<String, Object> extraClaims, UserDetails user) {
     return Jwts.builder()
         .claims(extraClaims)
+        .id(UUID.randomUUID().toString())
         .subject(user.getUsername())
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + EXPIRATION))
@@ -43,6 +45,10 @@ public class JwtService implements IJwtService {
 
   public String getUsernameFromToken(String token) {
     return getClaim(token, Claims::getSubject);
+  }
+
+  public String getJtiFromToken(String token) {
+    return getClaim(token, Claims::getId);
   }
 
   public boolean isTokenValid(String token, UserDetails userDetails) {
