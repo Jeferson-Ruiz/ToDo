@@ -19,7 +19,7 @@ public class UserValidationHelper {
 
     public void validateEmail(String email) {
         if (userRepository.existByEmail(email)) {
-            throw new IllegalArgumentException("username ya registrado");
+            throw new IllegalArgumentException("email ya registrado");
         }
     }
 
