@@ -45,6 +45,7 @@ public class AuthService implements IAuthService {
     this.sendActivationEmail = sendActivationEmail;
   }
 
+  @Override
   public AuthResponse login(AuthRequest request) {
     User user = userSearchMethods.findByEmail(request.email());
     validatePassword(request.password(), user.getPassword());
