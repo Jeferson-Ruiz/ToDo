@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import com.jr.todo.dto.DataDto;
 import com.jr.todo.modules.category.dto.CategoryDto;
 import com.jr.todo.modules.category.service.ICategoryService;
@@ -37,8 +38,8 @@ public class CategoryController {
   }
 
   @GetMapping("/name")
-  public ResponseEntity<?> getByName(@RequestBody DataDto name) {
-    CategoryDto category = categoryService.findByName(name.data());
+  public ResponseEntity<?> getByName(@RequestParam String name) {
+    CategoryDto category = categoryService.findByName(name);
     return ResponseEntity.ok(category);
   }
 

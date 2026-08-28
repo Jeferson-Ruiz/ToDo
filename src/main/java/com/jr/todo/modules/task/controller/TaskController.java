@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.RequestParam;
 import com.jr.todo.dto.DateDto;
 import com.jr.todo.dto.DataDto;
 import com.jr.todo.modules.task.dto.DescriptionDto;
@@ -44,20 +46,21 @@ public class TaskController {
   }
 
   @GetMapping("/category")
-  public ResponseEntity<?> getAllByCategory(@RequestBody DataDto category) {
-    List<TaskDto> taskDtos = taskService.getAllByCategory(category.data());
+  public ResponseEntity<?> getAllByCategory(@RequestParam String category) {
+    List<TaskDto> taskDtos = taskService.getAllByCategory(category);
     return ResponseEntity.ok(taskDtos);
   }
 
   @GetMapping("/name")
-  public ResponseEntity<?> getTaskByName(@RequestBody DataDto name) {
-    TaskDto taskDto = taskService.getTaskByName(name.data());
+  public ResponseEntity<?> getTaskByName(@RequestParam String name) {
+    TaskDto taskDto = taskService.getTaskByName(name);
     return ResponseEntity.ok(taskDto);
   }
 
   @GetMapping("/date")
-  public ResponseEntity<?> getAllByDate(@RequestBody DateDto date) {
-    List<TaskDto> taskDtos = taskService.getAllTaskByDate(date.date());
+  public ResponseEntity<?> getAllByDate(
+      @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm") java.time.LocalDateTime date) {
+    List<TaskDto> taskDtos = taskService.getAllTaskByDate(date);
     return ResponseEntity.ok(taskDtos);
   }
 
