@@ -7,7 +7,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.util.Date;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +33,7 @@ class TokenBlacklistServiceTest {
     @Test
     void blackListTokenSavesJtiAndExpiration() {
         when(jwtService.getJtiFromToken(anyString())).thenReturn("abc-123");
-        when(jwtService.getClaim((TOKEN), any()))
+        when(jwtService.getClaim(eq(TOKEN), any()))
                 .thenReturn(new Date(System.currentTimeMillis() + 3_600_000));
 
         tokenBlacklistService.blackListToken(TOKEN);
