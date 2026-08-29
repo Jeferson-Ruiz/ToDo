@@ -15,6 +15,7 @@ public record CategoryCreateDto(
         this.name,
         this.description,
         LocalDateTime.now(),
+        null,
         null);
   }
 }
