@@ -3,25 +3,26 @@ package com.jr.todo.modules.task.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.jr.todo.modules.task.dto.TaskDto;
+import com.jr.todo.modules.task.dto.TaskCreateDto;
+import com.jr.todo.modules.task.dto.TaskResponseDto;
 import com.jr.todo.modules.task.enums.Priority;
 import com.jr.todo.modules.task.enums.Status;
 
 public interface ITaskService {
 
-  TaskDto createTask(TaskDto taskDto);
+  TaskResponseDto createTask(TaskCreateDto taskDto);
 
-  List<TaskDto> getAllTaks();
+  List<TaskResponseDto> getAllTaks();
 
-  List<TaskDto> getAllByCategory(String name);
+  List<TaskResponseDto> getAllByCategory(String name);
 
-  TaskDto getTaskByName(String name);
+  TaskResponseDto getTaskByName(String name);
 
-  List<TaskDto> getAllTaskByDate(LocalDateTime date);
+  List<TaskResponseDto> getAllTaskByDate(LocalDateTime date);
 
-  List<TaskDto> getAllTaskByStatus(Status status);
+  List<TaskResponseDto> getAllTaskByStatus(Status status);
 
-  List<TaskDto> getAllTaskByPriority(Priority priority);
+  List<TaskResponseDto> getAllTaskByPriority(Priority priority);
 
   void updateTaskName(Long id, String newName);
 

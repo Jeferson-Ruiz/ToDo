@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.jr.todo.dto.DataDto;
-import com.jr.todo.modules.category.dto.CategoryDto;
+import com.jr.todo.modules.category.dto.CategoryCreateDto;
+import com.jr.todo.modules.category.dto.CategoryResponseDto;
 import com.jr.todo.modules.category.service.ICategoryService;
 
 @RestController
@@ -26,20 +27,20 @@ public class CategoryController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<?> create(@RequestBody CategoryDto newcategoryDto) {
-    CategoryDto categoryDto = categoryService.createCategory(newcategoryDto);
+  public ResponseEntity<?> create(@RequestBody CategoryCreateDto newcategoryDto) {
+    CategoryResponseDto categoryDto = categoryService.createCategory(newcategoryDto);
     return ResponseEntity.ok(categoryDto);
   }
 
   @GetMapping("/all")
   public ResponseEntity<?> getAll() {
-    List<CategoryDto> categoryDto = categoryService.findAll();
+    List<CategoryResponseDto> categoryDto = categoryService.findAll();
     return ResponseEntity.ok(categoryDto);
   }
 
   @GetMapping("/name")
   public ResponseEntity<?> getByName(@RequestParam String name) {
-    CategoryDto category = categoryService.findByName(name);
+    CategoryResponseDto category = categoryService.findByName(name);
     return ResponseEntity.ok(category);
   }
 

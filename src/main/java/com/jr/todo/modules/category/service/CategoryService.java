@@ -3,7 +3,8 @@ package com.jr.todo.modules.category.service;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
-import com.jr.todo.modules.category.dto.CategoryDto;
+import com.jr.todo.modules.category.dto.CategoryCreateDto;
+import com.jr.todo.modules.category.dto.CategoryResponseDto;
 import com.jr.todo.modules.category.entity.Category;
 import com.jr.todo.modules.category.repository.CategoryRepository;
 import com.jr.todo.modules.task.repository.TaskRepository;
@@ -23,28 +24,28 @@ public class CategoryService implements ICategoryService {
   }
 
   @Override
-  public CategoryDto createCategory(CategoryDto categoryDto) {
+  public CategoryResponseDto createCategory(CategoryCreateDto categoryDto) {
     validateName(categoryDto.name());
 
     Category category = categoryDto.toEntity();
     String newName = TextFormat.nameFormat(category.getName());
     category.setName(newName);
-    return CategoryDto.toDto(categoryRepository.save(category));
+    return CategoryResponseDto.toDto(categoryRepository.save(category));
   }
 
   @Override
-  public List<CategoryDto> findAll() {
+  public List<CategoryResponseDto> findAll() {
     List<Category> categories = categoryRepository.findAll();
     return categories.stream()
-        .map(CategoryDto::toDto)
+        .map(CategoryResponseDto::toDto)
         .collect(Collectors.toList());
   }
 
   @Override
-  public CategoryDto findByName(String name) {
+  public CategoryResponseDto findByName(String name) {
     Category category = categoryRepository.findByName(name)
         .orElseThrow(() -> new EntityNotFoundException("Categoria no encontrada"));
-    return CategoryDto.toDto(category);
+    return CategoryResponseDto.toDto(category);
   }
 
   @Override

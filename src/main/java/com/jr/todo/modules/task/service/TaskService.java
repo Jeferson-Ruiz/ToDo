@@ -6,7 +6,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import com.jr.todo.modules.category.entity.Category;
 import com.jr.todo.modules.category.repository.CategoryRepository;
-import com.jr.todo.modules.task.dto.TaskDto;
+import com.jr.todo.modules.task.dto.TaskCreateDto;
+import com.jr.todo.modules.task.dto.TaskResponseDto;
 import com.jr.todo.modules.task.entity.Task;
 import com.jr.todo.modules.task.enums.Priority;
 import com.jr.todo.modules.task.enums.Status;
@@ -30,7 +31,7 @@ public class TaskService implements ITaskService {
   Crear
   ----------------------*/
   @Override
-  public TaskDto createTask(TaskDto taskDto) {
+  public TaskResponseDto createTask(TaskCreateDto taskDto) {
     String taskName = TextFormat.nameFormat(taskDto.name());
 
     // Tarea unica
@@ -49,46 +50,46 @@ public class TaskService implements ITaskService {
     // validar fecha
     validarFachas(task.getDateCreation(), taskDto.deadline());
     Task saveTask = taskRepository.save(task);
-    return TaskDto.toDto(saveTask);
+    return TaskResponseDto.toDto(saveTask);
   }
 
   /*----------------------
   Find
   ----------------------*/
   @Override
-  public List<TaskDto> getAllTaks() {
+  public List<TaskResponseDto> getAllTaks() {
     List<Task> tasks = taskRepository.findAll();
     return mapToDto(tasks);
   }
 
   @Override
-  public List<TaskDto> getAllByCategory(String name) {
+  public List<TaskResponseDto> getAllByCategory(String name) {
     String findName = TextFormat.nameFormat(name);
     List<Task> tasks = taskRepository.findAllByCategory(findName);
     return mapToDto(tasks);
   }
 
   @Override
-  public TaskDto getTaskByName(String name) {
+  public TaskResponseDto getTaskByName(String name) {
     String nameNorma = TextFormat.nameFormat(name);
     Task task = findTaskByName(nameNorma);
-    return TaskDto.toDto(task);
+    return TaskResponseDto.toDto(task);
   }
 
   @Override
-  public List<TaskDto> getAllTaskByDate(LocalDateTime date) {
+  public List<TaskResponseDto> getAllTaskByDate(LocalDateTime date) {
     List<Task> tasks = taskRepository.findTasksByDate(date);
     return mapToDto(tasks);
   }
 
   @Override
-  public List<TaskDto> getAllTaskByStatus(Status status) {
+  public List<TaskResponseDto> getAllTaskByStatus(Status status) {
     List<Task> tasks = taskRepository.findTasksByStatus(status);
     return mapToDto(tasks);
   }
 
   @Override
-  public List<TaskDto> getAllTaskByPriority(Priority priority) {
+  public List<TaskResponseDto> getAllTaskByPriority(Priority priority) {
     List<Task> tasks = taskRepository.findTasksByPriority(priority);
     return mapToDto(tasks);
   }
@@ -172,9 +173,9 @@ public class TaskService implements ITaskService {
     return category;
   }
 
-  private List<TaskDto> mapToDto(List<Task> tasks) {
+  private List<TaskResponseDto> mapToDto(List<Task> tasks) {
     return tasks.stream()
-        .map(TaskDto::toDto)
+        .map(TaskResponseDto::toDto)
         .collect(Collectors.toList());
   }
 

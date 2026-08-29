@@ -1,15 +1,16 @@
 package com.jr.todo.modules.category.service;
 
 import java.util.List;
-import com.jr.todo.modules.category.dto.CategoryDto;
+import com.jr.todo.modules.category.dto.CategoryCreateDto;
+import com.jr.todo.modules.category.dto.CategoryResponseDto;
 
 public interface ICategoryService {
 
-  CategoryDto createCategory(CategoryDto categoryDto);
+  CategoryResponseDto createCategory(CategoryCreateDto categoryDto);
 
-  List<CategoryDto> findAll();
+  List<CategoryResponseDto> findAll();
 
-  CategoryDto findByName(String name);
+  CategoryResponseDto findByName(String name);
 
   void updateName(Long id, String newName);
 

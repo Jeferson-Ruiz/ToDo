@@ -12,7 +12,8 @@ import com.jr.todo.dto.DataDto;
 import com.jr.todo.modules.task.dto.DescriptionDto;
 import com.jr.todo.modules.task.dto.PriorityDto;
 import com.jr.todo.modules.task.dto.StatusDto;
-import com.jr.todo.modules.task.dto.TaskDto;
+import com.jr.todo.modules.task.dto.TaskCreateDto;
+import com.jr.todo.modules.task.dto.TaskResponseDto;
 import com.jr.todo.modules.task.enums.Priority;
 import com.jr.todo.modules.task.enums.Status;
 import com.jr.todo.modules.task.service.ITaskService;
@@ -34,45 +35,45 @@ public class TaskController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<?> createTask(@RequestBody TaskDto taskDto) {
-    TaskDto taskSave = taskService.createTask(taskDto);
+  public ResponseEntity<?> createTask(@RequestBody TaskCreateDto taskDto) {
+    TaskResponseDto taskSave = taskService.createTask(taskDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(taskSave);
   }
 
   @GetMapping("/all")
   public ResponseEntity<?> getAllTasks() {
-    List<TaskDto> taskDtos = taskService.getAllTaks();
+    List<TaskResponseDto> taskDtos = taskService.getAllTaks();
     return ResponseEntity.ok(taskDtos);
   }
 
   @GetMapping("/category")
   public ResponseEntity<?> getAllByCategory(@RequestParam String category) {
-    List<TaskDto> taskDtos = taskService.getAllByCategory(category);
+    List<TaskResponseDto> taskDtos = taskService.getAllByCategory(category);
     return ResponseEntity.ok(taskDtos);
   }
 
   @GetMapping("/name")
   public ResponseEntity<?> getTaskByName(@RequestParam String name) {
-    TaskDto taskDto = taskService.getTaskByName(name);
+    TaskResponseDto taskDto = taskService.getTaskByName(name);
     return ResponseEntity.ok(taskDto);
   }
 
   @GetMapping("/date")
   public ResponseEntity<?> getAllByDate(
       @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm") java.time.LocalDateTime date) {
-    List<TaskDto> taskDtos = taskService.getAllTaskByDate(date);
+    List<TaskResponseDto> taskDtos = taskService.getAllTaskByDate(date);
     return ResponseEntity.ok(taskDtos);
   }
 
   @GetMapping("/status/{status}")
   public ResponseEntity<?> getTaskByName(@PathVariable Status status) {
-    List<TaskDto> taskDto = taskService.getAllTaskByStatus(status);
+    List<TaskResponseDto> taskDto = taskService.getAllTaskByStatus(status);
     return ResponseEntity.ok(taskDto);
   }
 
   @GetMapping("/priority/{priority}")
   public ResponseEntity<?> getTaskByPriority(@PathVariable Priority priority) {
-    List<TaskDto> taskDto = taskService.getAllTaskByPriority(priority);
+    List<TaskResponseDto> taskDto = taskService.getAllTaskByPriority(priority);
     return ResponseEntity.ok(taskDto);
   }
 

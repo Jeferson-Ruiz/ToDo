@@ -20,7 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.jr.todo.DataProviderCategory;
 import com.jr.todo.DataProviderTask;
 import com.jr.todo.modules.category.repository.CategoryRepository;
-import com.jr.todo.modules.task.dto.TaskDto;
+import com.jr.todo.modules.task.dto.TaskCreateDto;
+import com.jr.todo.modules.task.dto.TaskResponseDto;
 import com.jr.todo.modules.task.entity.Task;
 import com.jr.todo.modules.task.enums.Priority;
 import com.jr.todo.modules.task.enums.Status;
@@ -41,7 +42,7 @@ public class TaskServiceTest {
 
     @Test
     void testCreateTaskErrorName() {
-        TaskDto taskDto = new TaskDto("prueba", "prueba", Status.FINALIZADA, null, Priority.ALTA, null);
+        TaskCreateDto taskDto = new TaskCreateDto("prueba", "prueba", Status.FINALIZADA, null, Priority.ALTA, null);
         when(taskRepository.existByName(anyString())).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class, () -> {
@@ -51,7 +52,7 @@ public class TaskServiceTest {
 
     @Test
     void testCreateTaskErrorCategory() {
-        TaskDto taskDto = new TaskDto("prueba", "prueba", Status.FINALIZADA, null, Priority.ALTA, "Inexistente");
+        TaskCreateDto taskDto = new TaskCreateDto("prueba", "prueba", Status.FINALIZADA, null, Priority.ALTA, "Inexistente");
         when(taskRepository.existByName(anyString())).thenReturn(false);
         when(categoryRepository.findByName("Inexistente")).thenReturn(Optional.empty());
 
@@ -62,12 +63,12 @@ public class TaskServiceTest {
 
     @Test
     void testCreateTaskSuccess() {
-        TaskDto taskDto = new TaskDto("prueba", "prueba", Status.FINALIZADA, null, Priority.ALTA, null);
+        TaskCreateDto taskDto = new TaskCreateDto("prueba", "prueba", Status.FINALIZADA, null, Priority.ALTA, null);
 
         when(taskRepository.existByName(anyString())).thenReturn(false);
         when(taskRepository.save(any(Task.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        TaskDto result = taskService.createTask(taskDto);
+        TaskResponseDto result = taskService.createTask(taskDto);
 
         ArgumentCaptor<Task> captor = ArgumentCaptor.forClass(Task.class);
         verify(taskRepository).save(captor.capture());
@@ -77,7 +78,7 @@ public class TaskServiceTest {
 
     @Test
     void testCreateTaskNameBlank() {
-        TaskDto taskDto = new TaskDto(" ", "prueba", Status.FINALIZADA, null, Priority.ALTA, null);
+        TaskCreateDto taskDto = new TaskCreateDto(" ", "prueba", Status.FINALIZADA, null, Priority.ALTA, null);
 
         assertThrows(IllegalArgumentException.class, () -> {
             taskService.createTask(taskDto);
@@ -87,7 +88,7 @@ public class TaskServiceTest {
 
     @Test
     void testCreateTaskInvalidDeadLine() {
-        TaskDto taskDto = new TaskDto("prueba", null, Status.FINALIZADA, LocalDateTime.now().minusDays(1),
+        TaskCreateDto taskDto = new TaskCreateDto("prueba", null, Status.FINALIZADA, LocalDateTime.now().minusDays(1),
                 Priority.ALTA, null);
 
         assertThrows(IllegalArgumentException.class, () -> {
@@ -97,13 +98,13 @@ public class TaskServiceTest {
 
     @Test
     void testCreateTaskSuccessWithCategory() {
-        TaskDto taskDto = new TaskDto("prueba", "prueba", Status.FINALIZADA, null, Priority.ALTA, "Trabajo");
+        TaskCreateDto taskDto = new TaskCreateDto("prueba", "prueba", Status.FINALIZADA, null, Priority.ALTA, "Trabajo");
 
         when(taskRepository.existByName(anyString())).thenReturn(false);
         when(categoryRepository.findByName("Trabajo")).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
         when(taskRepository.save(any(Task.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        TaskDto result = taskService.createTask(taskDto);
+        TaskResponseDto result = taskService.createTask(taskDto);
 
         ArgumentCaptor<Task> captor = ArgumentCaptor.forClass(Task.class);
         verify(taskRepository).save(captor.capture());
@@ -114,7 +115,7 @@ public class TaskServiceTest {
     @Test
     void testGetAllTask() {
         when(taskRepository.findAll()).thenReturn(DataProviderTask.listTaskMock());
-        List<TaskDto> result = taskService.getAllTaks();
+        List<TaskResponseDto> result = taskService.getAllTaks();
 
         assertNotNull(result);
         assertEquals("Prueba", result.get(0).name());
@@ -124,7 +125,7 @@ public class TaskServiceTest {
     void testGetAllByCategory() {
         String categoryName = "Trabajo";
         when(taskRepository.findAllByCategory(anyString())).thenReturn(DataProviderTask.listTaskMock());
-        List<TaskDto> result = taskService.getAllByCategory(categoryName);
+        List<TaskResponseDto> result = taskService.getAllByCategory(categoryName);
         assertNotNull(result);
         verify(taskRepository).findAllByCategory(categoryName);
         assertEquals("Prueba", result.get(0).name());
@@ -142,7 +143,7 @@ public class TaskServiceTest {
     void testGetTaskByName() {
         String taskName = "prueba";
         when(taskRepository.findTaskByName(anyString())).thenReturn(Optional.of(DataProviderTask.taskMock()));
-        TaskDto taskDto = taskService.getTaskByName(taskName);
+        TaskResponseDto taskDto = taskService.getTaskByName(taskName);
 
         assertEquals("Prueba", taskDto.name());
         assertNotNull(taskDto);
@@ -169,7 +170,7 @@ public class TaskServiceTest {
     void testGetAllTaskByDate() {
         LocalDateTime date = LocalDateTime.now();
         when(taskRepository.findTasksByDate(any())).thenReturn(DataProviderTask.listTaskMock());
-        List<TaskDto> result = taskService.getAllTaskByDate(date);
+        List<TaskResponseDto> result = taskService.getAllTaskByDate(date);
 
         assertNotNull(result);
         verify(taskRepository).findTasksByDate(date);
@@ -180,7 +181,7 @@ public class TaskServiceTest {
     void testGetAllTaskByStatus() {
         Status status = Status.FINALIZADA;
         when(taskRepository.findTasksByStatus(any())).thenReturn(DataProviderTask.listTaskMock());
-        List<TaskDto> result = taskService.getAllTaskByStatus(status);
+        List<TaskResponseDto> result = taskService.getAllTaskByStatus(status);
         assertNotNull(result);
         verify(taskRepository).findTasksByStatus(status);
         assertEquals("Prueba", result.get(0).name());
@@ -190,7 +191,7 @@ public class TaskServiceTest {
     void testGetAllTaskByPriority() {
         Priority priority = Priority.ALTA;
         when(taskRepository.findTasksByPriority(any())).thenReturn(DataProviderTask.listTaskMock());
-        List<TaskDto> result = taskService.getAllTaskByPriority(priority);
+        List<TaskResponseDto> result = taskService.getAllTaskByPriority(priority);
 
         assertNotNull(result);
         verify(taskRepository).findTasksByPriority(priority);

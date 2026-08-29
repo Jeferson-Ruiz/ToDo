@@ -16,7 +16,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import com.jr.todo.DataProviderCategory;
-import com.jr.todo.modules.category.dto.CategoryDto;
+import com.jr.todo.modules.category.dto.CategoryCreateDto;
+import com.jr.todo.modules.category.dto.CategoryResponseDto;
 import com.jr.todo.modules.category.entity.Category;
 import com.jr.todo.modules.category.repository.CategoryRepository;
 import com.jr.todo.modules.task.repository.TaskRepository;
@@ -36,7 +37,7 @@ public class CategoryServiceTest {
 
     @Test
     void testCreateCategoryExistName() {
-        CategoryDto category = new CategoryDto("Estudiar", "tematica estudio");
+        CategoryCreateDto category = new CategoryCreateDto("Estudiar", "tematica estudio");
         when(categoryRepository.existByName("Estudiar")).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class, () -> {
@@ -46,13 +47,13 @@ public class CategoryServiceTest {
 
     @Test
     void testCreateCategory() {
-        CategoryDto categoryDto = new CategoryDto("estudiar", "tematica");
+        CategoryCreateDto categoryDto = new CategoryCreateDto("estudiar", "tematica");
         Category savedCategory = new Category(1L, "Estudiar", "tematica", LocalDateTime.now(), null);
 
         when(categoryRepository.existByName("estudiar")).thenReturn(false);
         when(categoryRepository.save(any(Category.class))).thenReturn(savedCategory);
 
-        CategoryDto result = categoryService.createCategory(categoryDto);
+        CategoryResponseDto result = categoryService.createCategory(categoryDto);
 
         assertNotNull(result);
         assertEquals("Estudiar", result.name());
@@ -62,7 +63,7 @@ public class CategoryServiceTest {
 
     @Test
     void testCreateCategoryFormatsName() {
-        CategoryDto categoryDto = new CategoryDto("  eSTuDiAr  ", "tematica");
+        CategoryCreateDto categoryDto = new CategoryCreateDto("  eSTuDiAr  ", "tematica");
 
         when(categoryRepository.existByName(anyString())).thenReturn(false);
         when(categoryRepository.save(any(Category.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -77,7 +78,7 @@ public class CategoryServiceTest {
     @Test
     void testFindAll() {
         when(categoryRepository.findAll()).thenReturn(DataProviderCategory.listCategoryDtosMock());
-        List<CategoryDto> result = categoryService.findAll();
+        List<CategoryResponseDto> result = categoryService.findAll();
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -87,7 +88,7 @@ public class CategoryServiceTest {
     @Test
     void testFindByName() {
         when(categoryRepository.findByName(anyString())).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
-        CategoryDto result = categoryService.findByName(anyString());
+        CategoryResponseDto result = categoryService.findByName(anyString());
 
         assertEquals("Compras", result.name());
         assertNotNull(result);
@@ -161,6 +162,6 @@ public class CategoryServiceTest {
     void testValidateName() {
         when(categoryRepository.existByName(anyString())).thenReturn(true);
         assertThrows(IllegalArgumentException.class,
-                () -> categoryService.createCategory(new CategoryDto("prueba", "descripcion")));
+                () -> categoryService.createCategory(new CategoryCreateDto("prueba", "descripcion")));
     }
 }
