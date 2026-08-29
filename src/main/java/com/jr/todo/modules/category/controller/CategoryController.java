@@ -2,7 +2,6 @@ package com.jr.todo.modules.category.controller;
 
 import java.util.List;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -11,11 +10,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import com.jr.todo.dto.DataDto;
 import com.jr.todo.modules.category.dto.CategoryDto;
 import com.jr.todo.modules.category.service.ICategoryService;
 
-@Controller
+@RestController
 @RequestMapping("/category")
 public class CategoryController {
 
@@ -49,7 +49,7 @@ public class CategoryController {
     return ResponseEntity.noContent().build();
   }
 
-  @PatchMapping("/updata-description/{id}")
+  @PatchMapping("/update-description/{id}")
   public ResponseEntity<?> updateDescription(@PathVariable Long id, @RequestBody DataDto description) {
     categoryService.updateDescription(id, description.data());
     return ResponseEntity.noContent().build();
