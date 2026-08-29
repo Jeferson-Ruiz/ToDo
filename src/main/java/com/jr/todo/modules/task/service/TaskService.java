@@ -12,19 +12,30 @@ import com.jr.todo.modules.task.entity.Task;
 import com.jr.todo.modules.task.enums.Priority;
 import com.jr.todo.modules.task.enums.Status;
 import com.jr.todo.modules.task.repository.TaskRepository;
+import com.jr.todo.modules.user.entity.User;
+import com.jr.todo.modules.user.repository.UserRepository;
 import com.jr.todo.util.TextFormat;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 @Transactional
 public class TaskService implements ITaskService {
   private final TaskRepository taskRepository;
   private final CategoryRepository categoryRepository;
+  private final UserRepository userRepository;
 
-  public TaskService(TaskRepository taskRepository, CategoryRepository categoryRepository) {
+  public TaskService(TaskRepository taskRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
     this.taskRepository = taskRepository;
     this.categoryRepository = categoryRepository;
+    this.userRepository = userRepository;
+  }
+
+  private User currentUser() {
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    return userRepository.findByEmail(email)
+        .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
   }
 
   /*----------------------
@@ -32,19 +43,21 @@ public class TaskService implements ITaskService {
   ----------------------*/
   @Override
   public TaskResponseDto createTask(TaskCreateDto taskDto) {
+    User user = currentUser();
     String taskName = TextFormat.nameFormat(taskDto.name());
 
-    // Tarea unica
-    if (taskRepository.existByName(taskName)) {
+    // Tarea unica por usuario
+    if (taskRepository.existsByNameAndUserId(taskName, user.getId())) {
       throw new IllegalArgumentException("Tarea repetida");
     }
 
-    // Buscar la categoría por nombre (solo si existe)
+    // Buscar la categoría por nombre del usuario (solo si existe)
     Category category = taskDto.category() != null ? findCategoryByName(taskDto.category()) : null;
 
     Task task = taskDto.toEntity();
     task.setName(taskName);
     task.setCategory(category);
+    task.setUser(user);
     task.setDateCreation(LocalDateTime.now());
 
     // validar fecha
@@ -58,14 +71,14 @@ public class TaskService implements ITaskService {
   ----------------------*/
   @Override
   public List<TaskResponseDto> getAllTaks() {
-    List<Task> tasks = taskRepository.findAll();
+    List<Task> tasks = taskRepository.findAllByUserId(currentUser().getId());
     return mapToDto(tasks);
   }
 
   @Override
   public List<TaskResponseDto> getAllByCategory(String name) {
     String findName = TextFormat.nameFormat(name);
-    List<Task> tasks = taskRepository.findAllByCategory(findName);
+    List<Task> tasks = taskRepository.findAllByCategoryAndUserId(findName, currentUser().getId());
     return mapToDto(tasks);
   }
 
@@ -78,19 +91,19 @@ public class TaskService implements ITaskService {
 
   @Override
   public List<TaskResponseDto> getAllTaskByDate(LocalDateTime date) {
-    List<Task> tasks = taskRepository.findTasksByDate(date);
+    List<Task> tasks = taskRepository.findTasksByDateAndUserId(date, currentUser().getId());
     return mapToDto(tasks);
   }
 
   @Override
   public List<TaskResponseDto> getAllTaskByStatus(Status status) {
-    List<Task> tasks = taskRepository.findTasksByStatus(status);
+    List<Task> tasks = taskRepository.findTasksByStatusAndUserId(status, currentUser().getId());
     return mapToDto(tasks);
   }
 
   @Override
   public List<TaskResponseDto> getAllTaskByPriority(Priority priority) {
-    List<Task> tasks = taskRepository.findTasksByPriority(priority);
+    List<Task> tasks = taskRepository.findTasksByPriorityAndUserId(priority, currentUser().getId());
     return mapToDto(tasks);
   }
 
@@ -155,20 +168,23 @@ public class TaskService implements ITaskService {
   Helpers
   ----------------------*/
   private Task findTaskByName(String name) {
-    Task task = taskRepository.findTaskByName(name)
+    Long userId = currentUser().getId();
+    Task task = taskRepository.findTaskByNameAndUserId(name, userId)
         .orElseThrow(() -> new EntityNotFoundException("No se encontro tarea"));
     return task;
   }
 
   private Task findTaskById(Long id) {
-    Task task = taskRepository.findById(id)
+    Long userId = currentUser().getId();
+    Task task = taskRepository.findByTaskIdAndUserId(id, userId)
         .orElseThrow(() -> new EntityNotFoundException("Tarea no Encontrada"));
     return task;
   }
 
   private Category findCategoryByName(String name) {
     String newname = TextFormat.nameFormat(name);
-    Category category = categoryRepository.findByName(newname)
+    Long userId = currentUser().getId();
+    Category category = categoryRepository.findByNameAndUserId(newname, userId)
         .orElseThrow(() -> new EntityNotFoundException("Categoría inexistente: " + newname));
     return category;
   }
