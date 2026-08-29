@@ -25,7 +25,7 @@ public class UserValidationHelper {
 
     public void isEnabled(String email) {
         if (!userRepository.isUserEnabled(email)) {
-            throw new IllegalArgumentException("Usuario desactivado, validar mediante emial");
+            throw new IllegalAccessError("Usuario desactivado, validar mediante emial");
         }
     }
 }
