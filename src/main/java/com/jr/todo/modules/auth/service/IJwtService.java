@@ -12,6 +12,8 @@ public interface IJwtService {
 
   String getJtiFromToken(String token);
 
+  String getRoleFromToken(String token);
+
   boolean isTokenValid(String token, UserDetails userDetails);
 
   <T> T getClaim(String token, Function<Claims, T> claimsResolver);

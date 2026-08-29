@@ -24,7 +24,15 @@ public class JwtService implements IJwtService {
   private Long EXPIRATION;
 
   public String getToken(UserDetails user) {
-    return getToken(new HashMap<>(), user);
+    Map<String, Object> extraClaims = new HashMap<>();
+    if (user instanceof com.jr.todo.modules.user.entity.User u && u.getRole() != null) {
+      extraClaims.put("role", u.getRole().name());
+      
+    } else if (!user.getAuthorities().isEmpty()) {
+      String authority = user.getAuthorities().iterator().next().getAuthority();
+      extraClaims.put("role", authority.replace("ROLE_", ""));
+    }
+    return getToken(extraClaims, user);
   }
 
   private String getToken(Map<String, Object> extraClaims, UserDetails user) {
@@ -49,6 +57,10 @@ public class JwtService implements IJwtService {
 
   public String getJtiFromToken(String token) {
     return getClaim(token, Claims::getId);
+  }
+
+  public String getRoleFromToken(String token) {
+    return getClaim(token, claims -> claims.get("role", String.class));
   }
 
   public boolean isTokenValid(String token, UserDetails userDetails) {
