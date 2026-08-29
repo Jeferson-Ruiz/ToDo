@@ -11,6 +11,7 @@ import com.jr.todo.dto.AuthRequest;
 import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.modules.auth.service.IAuthService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpHeaders;
 
 @RestController
 @RequestMapping("/auth")
@@ -39,7 +40,7 @@ public class AuthController {
 
   @PostMapping("/logout")
   public ResponseEntity<String> logout(HttpServletRequest request) {
-    String authHeader = request.getHeader("AUTHORIZATION");
+    String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
     authService.logout(authHeader);
     return ResponseEntity.ok("Sesion cerrada");
   }
