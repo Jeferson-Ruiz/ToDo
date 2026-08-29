@@ -35,6 +35,7 @@ public record TaskDto(
         this.status,
         this.deadline,
         this.priority,
+        null,
         null);
   }
 }
