@@ -37,10 +37,11 @@ public class AuthController {
     return ResponseEntity.ok(authService.resendActivationEmail(request));
   }
 
-  @PostMapping("/logouth")
+  @PostMapping("/logout")
   public ResponseEntity<String> logout(HttpServletRequest request) {
-    authService.logout(request.getHeader("AUTHORIZATION"));
-    return ResponseEntity.ok("Sesión cerrada con exito");
+    String authHeader = request.getHeader("AUTHORIZATION");
+    authService.logout(authHeader);
+    return ResponseEntity.ok("Sesion cerrada");
   }
 
   @GetMapping("/activation")
