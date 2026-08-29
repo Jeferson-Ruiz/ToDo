@@ -12,14 +12,14 @@ public class DataProviderTask {
     public static List<Task> listTaskMock() {
         return List.of(
                 new Task(1L, "Prueba", "texto prueba", LocalDateTime.now(), Status.FINALIZADA, LocalDateTime.now(),
-                        Priority.ALTA, null),
+                        Priority.ALTA, null, DataProviderCategory.userMock()),
                 new Task(2L, "Pruena2", "texto prueba2", LocalDateTime.now(), Status.PENDIENTE, null, Priority.BAJA,
-                        null));
+                        null, DataProviderCategory.userMock()));
     }
 
     public static Task taskMock() {
         return new Task(1L, "Prueba", "texto prueba", LocalDateTime.now(), Status.FINALIZADA, LocalDateTime.now(),
-                Priority.ALTA, null);
+                Priority.ALTA, null, DataProviderCategory.userMock());
     }
 
 }
