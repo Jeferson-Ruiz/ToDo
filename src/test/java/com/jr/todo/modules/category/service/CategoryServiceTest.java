@@ -4,23 +4,30 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.lenient;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import com.jr.todo.DataProviderCategory;
 import com.jr.todo.modules.category.dto.CategoryCreateDto;
 import com.jr.todo.modules.category.dto.CategoryResponseDto;
 import com.jr.todo.modules.category.entity.Category;
 import com.jr.todo.modules.category.repository.CategoryRepository;
 import com.jr.todo.modules.task.repository.TaskRepository;
+import com.jr.todo.modules.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,13 +39,28 @@ public class CategoryServiceTest {
     @Mock
     private CategoryRepository categoryRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
     @InjectMocks
     private CategoryService categoryService;
+
+    @BeforeEach
+    void setupSecurity() {
+        var auth = new UsernamePasswordAuthenticationToken("pedro@correo.com", null, List.of());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        lenient().when(userRepository.findByEmail("pedro@correo.com")).thenReturn(Optional.of(DataProviderCategory.userMock()));
+    }
+
+    @AfterEach
+    void clearSecurity() {
+        SecurityContextHolder.clearContext();
+    }
 
     @Test
     void testCreateCategoryExistName() {
         CategoryCreateDto category = new CategoryCreateDto("Estudiar", "tematica estudio");
-        when(categoryRepository.existByName("Estudiar")).thenReturn(true);
+        when(categoryRepository.existsByNameAndUserId(eq("Estudiar"), anyLong())).thenReturn(true);
 
         assertThrows(IllegalArgumentException.class, () -> {
             categoryService.createCategory(category);
@@ -48,9 +70,9 @@ public class CategoryServiceTest {
     @Test
     void testCreateCategory() {
         CategoryCreateDto categoryDto = new CategoryCreateDto("estudiar", "tematica");
-        Category savedCategory = new Category(1L, "Estudiar", "tematica", LocalDateTime.now(), null);
+        Category savedCategory = new Category(1L, "Estudiar", "tematica", LocalDateTime.now(), DataProviderCategory.userMock(), null);
 
-        when(categoryRepository.existByName("estudiar")).thenReturn(false);
+        when(categoryRepository.existsByNameAndUserId(eq("Estudiar"), anyLong())).thenReturn(false);
         when(categoryRepository.save(any(Category.class))).thenReturn(savedCategory);
 
         CategoryResponseDto result = categoryService.createCategory(categoryDto);
@@ -65,7 +87,7 @@ public class CategoryServiceTest {
     void testCreateCategoryFormatsName() {
         CategoryCreateDto categoryDto = new CategoryCreateDto("  eSTuDiAr  ", "tematica");
 
-        when(categoryRepository.existByName(anyString())).thenReturn(false);
+        when(categoryRepository.existsByNameAndUserId(anyString(), anyLong())).thenReturn(false);
         when(categoryRepository.save(any(Category.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         categoryService.createCategory(categoryDto);
@@ -77,7 +99,7 @@ public class CategoryServiceTest {
 
     @Test
     void testFindAll() {
-        when(categoryRepository.findAll()).thenReturn(DataProviderCategory.listCategoryDtosMock());
+        when(categoryRepository.findAllByUserId(anyLong())).thenReturn(DataProviderCategory.listCategoryDtosMock());
         List<CategoryResponseDto> result = categoryService.findAll();
 
         assertNotNull(result);
@@ -87,8 +109,8 @@ public class CategoryServiceTest {
 
     @Test
     void testFindByName() {
-        when(categoryRepository.findByName(anyString())).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
-        CategoryResponseDto result = categoryService.findByName(anyString());
+        when(categoryRepository.findByNameAndUserId(anyString(), anyLong())).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
+        CategoryResponseDto result = categoryService.findByName("Compras");
 
         assertEquals("Compras", result.name());
         assertNotNull(result);
@@ -96,16 +118,16 @@ public class CategoryServiceTest {
 
     @Test
     void testFindByNameError() {
-        when(categoryRepository.findByName(anyString())).thenReturn(Optional.empty());
+        when(categoryRepository.findByNameAndUserId(anyString(), anyLong())).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> {
-            categoryService.findByName(anyString());
+            categoryService.findByName("Inexistente");
         });
     }
 
     @Test
     void testUpdateName() {
         Long id = 1L;
-        when(categoryRepository.findById(id)).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
+        when(categoryRepository.findByCategoryIdAndUserId(eq(id), anyLong())).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
 
         categoryService.updateName(id, " eStuDiar ");
 
@@ -117,7 +139,7 @@ public class CategoryServiceTest {
     @Test
     void testUpdateNameNotFound() {
         Long id = 1L;
-        when(categoryRepository.findById(id)).thenReturn(Optional.empty());
+        when(categoryRepository.findByCategoryIdAndUserId(eq(id), anyLong())).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> categoryService.updateName(id, "nuevo"));
     }
 
@@ -125,7 +147,7 @@ public class CategoryServiceTest {
     void testUpdateDescription() {
         Long id = 1L;
         String description = "Descripcion";
-        when(categoryRepository.findById(id)).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
+        when(categoryRepository.findByCategoryIdAndUserId(eq(id), anyLong())).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
 
         categoryService.updateDescription(id, description);
 
@@ -137,30 +159,30 @@ public class CategoryServiceTest {
     @Test
     void testUpdateDescriptionNotFound() {
         Long id = 1L;
-        when(categoryRepository.findById(id)).thenReturn(Optional.empty());
+        when(categoryRepository.findByCategoryIdAndUserId(eq(id), anyLong())).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> categoryService.updateDescription(id, "descripcion"));
     }
 
     @Test
     void testDelete() {
         Long id = 1L;
-        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
+        when(categoryRepository.findByCategoryIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
         categoryService.delete(id);
         verify(categoryRepository).deleteById(id);
-        verify(taskRepository).disassociateTasksByCategory(id);
+        verify(taskRepository).disassociateTasksByCategoryAndUserId(eq(id), anyLong());
     }
 
     @Test
     void testDeleteNotFound() {
         Long id = 1L;
-        when(categoryRepository.findById(id)).thenReturn(Optional.empty());
+        when(categoryRepository.findByCategoryIdAndUserId(eq(id), anyLong())).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> categoryService.delete(id));
         verify(categoryRepository, never()).deleteById(anyLong());
     }
 
     @Test
     void testValidateName() {
-        when(categoryRepository.existByName(anyString())).thenReturn(true);
+        when(categoryRepository.existsByNameAndUserId(anyString(), anyLong())).thenReturn(true);
         assertThrows(IllegalArgumentException.class,
                 () -> categoryService.createCategory(new CategoryCreateDto("prueba", "descripcion")));
     }

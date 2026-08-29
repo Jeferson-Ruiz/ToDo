@@ -16,12 +16,12 @@ public class DataProviderCategory {
 
     public static List<Category> listCategoryDtosMock() {
         return List.of(
-                new Category(1L, "Compras", "despensa", LocalDateTime.now(), null),
-                new Category(2L, "Universidad", "parciales", LocalDateTime.now(), null));
+                new Category(1L, "Compras", "despensa", LocalDateTime.now(), userMock(), null),
+                new Category(2L, "Universidad", "parciales", LocalDateTime.now(), userMock(), null));
     }
 
     public static Category categoryMock() {
-        return new Category(1L, "Compras", "despensa", LocalDateTime.now(), null);
+        return new Category(1L, "Compras", "despensa", LocalDateTime.now(), userMock(), null);
     }
 
     
