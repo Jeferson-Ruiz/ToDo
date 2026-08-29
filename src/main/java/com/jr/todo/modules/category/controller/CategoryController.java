@@ -15,6 +15,7 @@ import com.jr.todo.dto.DataDto;
 import com.jr.todo.modules.category.dto.CategoryCreateDto;
 import com.jr.todo.modules.category.dto.CategoryResponseDto;
 import com.jr.todo.modules.category.service.ICategoryService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/category")
@@ -27,7 +28,7 @@ public class CategoryController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<?> create(@RequestBody CategoryCreateDto newcategoryDto) {
+  public ResponseEntity<?> create(@Valid @RequestBody CategoryCreateDto newcategoryDto) {
     CategoryResponseDto categoryDto = categoryService.createCategory(newcategoryDto);
     return ResponseEntity.ok(categoryDto);
   }
@@ -45,13 +46,13 @@ public class CategoryController {
   }
 
   @PatchMapping("/update-name/{id}")
-  public ResponseEntity<?> updateName(@PathVariable Long id, @RequestBody DataDto name) {
+  public ResponseEntity<?> updateName(@PathVariable Long id, @Valid @RequestBody DataDto name) {
     categoryService.updateName(id, name.data());
     return ResponseEntity.noContent().build();
   }
 
   @PatchMapping("/update-description/{id}")
-  public ResponseEntity<?> updateDescription(@PathVariable Long id, @RequestBody DataDto description) {
+  public ResponseEntity<?> updateDescription(@PathVariable Long id, @Valid @RequestBody DataDto description) {
     categoryService.updateDescription(id, description.data());
     return ResponseEntity.noContent().build();
   }

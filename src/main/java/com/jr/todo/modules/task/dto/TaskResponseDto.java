@@ -1,8 +1,8 @@
 package com.jr.todo.modules.task.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDateTime;
-
 import com.jr.todo.modules.task.entity.Task;
 import com.jr.todo.modules.task.enums.Priority;
 import com.jr.todo.modules.task.enums.Status;
@@ -13,10 +13,10 @@ public record TaskResponseDto(
     String name,
     String description,
     Status status,
-    LocalDateTime deadline,
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm") LocalDateTime deadline,
     Priority priority,
     String category,
-    LocalDateTime dateCreation) {
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm") LocalDateTime dateCreation) {
 
   public static TaskResponseDto toDto(Task task) {
     return new TaskResponseDto(

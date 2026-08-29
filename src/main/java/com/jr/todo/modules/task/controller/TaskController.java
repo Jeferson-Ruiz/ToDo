@@ -17,6 +17,7 @@ import com.jr.todo.modules.task.dto.TaskResponseDto;
 import com.jr.todo.modules.task.enums.Priority;
 import com.jr.todo.modules.task.enums.Status;
 import com.jr.todo.modules.task.service.ITaskService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -35,7 +36,7 @@ public class TaskController {
   }
 
   @PostMapping("/create")
-  public ResponseEntity<?> createTask(@RequestBody TaskCreateDto taskDto) {
+  public ResponseEntity<?> createTask(@Valid @RequestBody TaskCreateDto taskDto) {
     TaskResponseDto taskSave = taskService.createTask(taskDto);
     return ResponseEntity.status(HttpStatus.CREATED).body(taskSave);
   }
@@ -60,7 +61,7 @@ public class TaskController {
 
   @GetMapping("/date")
   public ResponseEntity<?> getAllByDate(
-      @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy HH:mm") java.time.LocalDateTime date) {
+      @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm") java.time.LocalDateTime date) {
     List<TaskResponseDto> taskDtos = taskService.getAllTaskByDate(date);
     return ResponseEntity.ok(taskDtos);
   }
@@ -79,37 +80,37 @@ public class TaskController {
 
   // Update
   @PatchMapping("/update/name/{id}")
-  public ResponseEntity<?> updateTaskName(@PathVariable Long id, @RequestBody DataDto newName) {
+  public ResponseEntity<?> updateTaskName(@PathVariable Long id, @Valid @RequestBody DataDto newName) {
     taskService.updateTaskName(id, newName.data());
     return ResponseEntity.noContent().build();
   }
 
   @PatchMapping("/update/description/{id}")
-  public ResponseEntity<?> updateTaskDescription(@PathVariable Long id, @RequestBody DescriptionDto newDescription) {
+  public ResponseEntity<?> updateTaskDescription(@PathVariable Long id, @Valid @RequestBody DescriptionDto newDescription) {
     taskService.updateTaskDescription(id, newDescription.description());
     return ResponseEntity.noContent().build();
   }
 
   @PatchMapping("/update/status/{id}")
-  public ResponseEntity<?> updateTaskStatus(@PathVariable Long id, @RequestBody StatusDto newStatus) {
+  public ResponseEntity<?> updateTaskStatus(@PathVariable Long id, @Valid @RequestBody StatusDto newStatus) {
     taskService.updateTaskStatus(id, newStatus.status());
     return ResponseEntity.noContent().build();
   }
 
   @PatchMapping("/update/deadline/{id}")
-  public ResponseEntity<?> updateDeadline(@PathVariable Long id, @RequestBody DateDto newDate) {
+  public ResponseEntity<?> updateDeadline(@PathVariable Long id, @Valid @RequestBody DateDto newDate) {
     taskService.updateDeadline(id, newDate.date());
     return ResponseEntity.noContent().build();
   }
 
   @PatchMapping("/update/priority/{id}")
-  public ResponseEntity<?> updatePriority(@PathVariable Long id, @RequestBody PriorityDto priority) {
+  public ResponseEntity<?> updatePriority(@PathVariable Long id, @Valid @RequestBody PriorityDto priority) {
     taskService.updatePriority(id, priority.priority());
     return ResponseEntity.noContent().build();
   }
 
   @PatchMapping("/update/category-name/{id}")
-  public ResponseEntity<?> updateCategoty(@PathVariable Long id, @RequestBody DataDto category) {
+  public ResponseEntity<?> updateCategoty(@PathVariable Long id, @Valid @RequestBody DataDto category) {
     taskService.updateCategory(id, category.data());
     return ResponseEntity.noContent().build();
   }
