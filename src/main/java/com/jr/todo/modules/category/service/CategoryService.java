@@ -8,34 +8,47 @@ import com.jr.todo.modules.category.dto.CategoryResponseDto;
 import com.jr.todo.modules.category.entity.Category;
 import com.jr.todo.modules.category.repository.CategoryRepository;
 import com.jr.todo.modules.task.repository.TaskRepository;
+import com.jr.todo.modules.user.entity.User;
+import com.jr.todo.modules.user.repository.UserRepository;
 import com.jr.todo.util.TextFormat;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 public class CategoryService implements ICategoryService {
 
   private final CategoryRepository categoryRepository;
   private final TaskRepository taskRepository;
+  private final UserRepository userRepository;
 
-  public CategoryService(CategoryRepository categoryRepository, TaskRepository taskRepository) {
+  public CategoryService(CategoryRepository categoryRepository, TaskRepository taskRepository, UserRepository userRepository) {
     this.categoryRepository = categoryRepository;
     this.taskRepository = taskRepository;
+    this.userRepository = userRepository;
+  }
+
+  private User currentUser() {
+    String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    return userRepository.findByEmail(email)
+        .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
   }
 
   @Override
   public CategoryResponseDto createCategory(CategoryCreateDto categoryDto) {
-    validateName(categoryDto.name());
+    User user = currentUser();
+    validateName(categoryDto.name(), user.getId());
 
     Category category = categoryDto.toEntity();
     String newName = TextFormat.nameFormat(category.getName());
     category.setName(newName);
+    category.setUser(user);
     return CategoryResponseDto.toDto(categoryRepository.save(category));
   }
 
   @Override
   public List<CategoryResponseDto> findAll() {
-    List<Category> categories = categoryRepository.findAll();
+    List<Category> categories = categoryRepository.findAllByUserId(currentUser().getId());
     return categories.stream()
         .map(CategoryResponseDto::toDto)
         .collect(Collectors.toList());
@@ -43,7 +56,9 @@ public class CategoryService implements ICategoryService {
 
   @Override
   public CategoryResponseDto findByName(String name) {
-    Category category = categoryRepository.findByName(name)
+    Long userId = currentUser().getId();
+    String normalized = TextFormat.nameFormat(name);
+    Category category = categoryRepository.findByNameAndUserId(normalized, userId)
         .orElseThrow(() -> new EntityNotFoundException("Categoria no encontrada"));
     return CategoryResponseDto.toDto(category);
   }
@@ -66,20 +81,23 @@ public class CategoryService implements ICategoryService {
   @Transactional
   @Override
   public void delete(Long id) {
+    User user = currentUser();
     findById(id);
-    taskRepository.disassociateTasksByCategory(id);
+    taskRepository.disassociateTasksByCategoryAndUserId(id, user.getId());
     categoryRepository.deleteById(id);
   }
 
   // helpers
-  private void validateName(String name) {
-    if (categoryRepository.existByName(name)) {
+  private void validateName(String name, Long userId) {
+    String normalized = TextFormat.nameFormat(name);
+    if (categoryRepository.existsByNameAndUserId(normalized, userId)) {
       throw new IllegalArgumentException("categoria ya creada");
     }
   }
 
   private Category findById(Long id) {
-    Category category = categoryRepository.findById(id)
+    Long userId = currentUser().getId();
+    Category category = categoryRepository.findByCategoryIdAndUserId(id, userId)
         .orElseThrow(() -> new EntityNotFoundException("Categoria no encontrada"));
     return category;
   }
