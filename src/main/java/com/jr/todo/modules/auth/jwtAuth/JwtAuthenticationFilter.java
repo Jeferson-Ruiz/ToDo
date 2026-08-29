@@ -2,10 +2,12 @@ package com.jr.todo.modules.auth.jwtAuth;
 
 import java.io.IOException;
 import org.springframework.http.HttpHeaders;
+import java.util.List;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -23,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtService jwtService;
-  private final UserDetailsService userDetailsService;
   private final ITokenBlacklistService tokenBlacklistService;
 
   @Override
@@ -46,15 +47,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       return;
     }
 
+    final String role;
     try {
       username = jwtService.getUsernameFromToken(token);
+      role = jwtService.getRoleFromToken(token);
     } catch (Exception e) {
-      filterChain.doFilter(request, response);
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      response.setContentType("application/json");
+      response.getWriter().write("{\"error\": \"Token inválido o expirado\"}");
       return;
     }
 
-    if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-      UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+    if (username != null && role != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+      UserDetails userDetails = new User(username, "", List.of(new SimpleGrantedAuthority("ROLE_" + role)));
 
       if (jwtService.isTokenValid(token, userDetails)) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
