@@ -2,6 +2,7 @@ package com.jr.todo.modules.auth.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,9 @@ public class AuthService implements IAuthService {
   private final AccountActivationTokenRepository accountActivationTokenRepository;
   private final SendActivationEmail sendActivationEmail;
 
+  @Value("${jwt.expiration}")
+  private Long jwtExpiration;
+
   public AuthService(UserRepository userRepository, IJwtService jwtService, PasswordEncoder passwordEncoder,
       ITokenBlacklistService tokenBlacklistService, UserValidationHelper userValidation,
       UserSearchMethods userSearchMethods, AccountActivationTokenRepository accountActivationTokenRepository,
@@ -51,7 +55,9 @@ public class AuthService implements IAuthService {
     validatePassword(request.password(), user.getPassword());
 
     userValidation.isEnabled(request.email());
-    return new AuthResponse(jwtService.getToken(user));
+    String token = jwtService.getToken(user);
+    Long expiresIn = jwtExpiration != null ? jwtExpiration : 86400000L;
+    return new AuthResponse(token, user.getEmail(), user.getRole().name(), expiresIn);
   }
 
   @Override
