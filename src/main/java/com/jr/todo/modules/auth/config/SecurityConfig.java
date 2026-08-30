@@ -12,6 +12,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jr.todo.exception.ApiError;
 import com.jr.todo.modules.auth.jwtAuth.JwtAuthenticationFilter;
 
 @Configuration
@@ -20,10 +22,13 @@ public class SecurityConfig {
 
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
   private final AuthenticationProvider authProvider;
+  private final ObjectMapper objectMapper;
 
-  SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, AuthenticationProvider authProvider) {
+  SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, AuthenticationProvider authProvider,
+      ObjectMapper objectMapper) {
     this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     this.authProvider = authProvider;
+    this.objectMapper = objectMapper;
   }
 
   @Bean
@@ -31,6 +36,9 @@ public class SecurityConfig {
     return http
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .csrf(csrf -> csrf.disable())
+        .exceptionHandling(ex -> ex
+            .authenticationEntryPoint((request, response, authException) -> ApiError.write(request, response, objectMapper, 401, "No autenticado"))
+            .accessDeniedHandler((request, response, accessDeniedException) -> ApiError.write(request, response, objectMapper, 403, "Acceso denegado")))
         .authorizeHttpRequests(authRequest -> authRequest
             .requestMatchers("/auth/**", "/recovery/**").permitAll()
             .requestMatchers("/admin/**").hasRole("ADMIN")
