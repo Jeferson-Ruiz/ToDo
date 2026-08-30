@@ -12,6 +12,8 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jr.todo.exception.ApiError;
 import com.jr.todo.modules.auth.service.ITokenBlacklistService;
 import com.jr.todo.modules.auth.service.JwtService;
 import jakarta.servlet.FilterChain;
@@ -26,6 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtService jwtService;
   private final ITokenBlacklistService tokenBlacklistService;
+  private final ObjectMapper objectMapper;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -39,11 +42,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       return;
     }
 
-    // valida que la seccion no
     if (tokenBlacklistService.isBlackListed(token)) {
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.setContentType("application/json");
-      response.getWriter().write("{\"error\": \"Sesión cerrada. Inicia sesión nuevamente.\"}");
+      ApiError.write(request, response, objectMapper, HttpServletResponse.SC_UNAUTHORIZED,
+          "Sesión cerrada. Inicia sesión nuevamente.");
       return;
     }
 
@@ -52,9 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       username = jwtService.getUsernameFromToken(token);
       role = jwtService.getRoleFromToken(token);
     } catch (Exception e) {
-      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      response.setContentType("application/json");
-      response.getWriter().write("{\"error\": \"Token inválido o expirado\"}");
+      ApiError.write(request, response, objectMapper, HttpServletResponse.SC_UNAUTHORIZED, "Token inválido o expirado");
       return;
     }
 
