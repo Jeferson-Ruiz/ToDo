@@ -12,6 +12,7 @@ import com.jr.todo.modules.user.dto.PasswordUpdateAdminDto;
 import com.jr.todo.modules.user.dto.UpdateRoleDto;
 import com.jr.todo.modules.user.dto.UserResponseDto;
 import com.jr.todo.modules.user.service.IAdministrativeService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/admin")
@@ -24,25 +25,25 @@ public class AdmistrativeController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> userCreate(@RequestBody UserCreateDto userRequest) {
+    public ResponseEntity<?> userCreate(@Valid @RequestBody UserCreateDto userRequest) {
         UserResponseDto userDto = administrativeService.createUser(userRequest);
         return ResponseEntity.ok(userDto);
     }
 
     @PatchMapping("/update-enable")
-    public ResponseEntity<?> updateEnable(@RequestBody EnableUpdateDto data) {
+    public ResponseEntity<?> updateEnable(@Valid @RequestBody EnableUpdateDto data) {
         administrativeService.updateEnable(data.email(), data.enable());
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/update-role")
-    public ResponseEntity<?> updateRole(@RequestBody UpdateRoleDto data) {
+    public ResponseEntity<?> updateRole(@Valid @RequestBody UpdateRoleDto data) {
         administrativeService.updateRole(data.email(), data.role());
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/update-password")
-    public ResponseEntity<?> updatePassword(@RequestBody PasswordUpdateAdminDto request) {
+    public ResponseEntity<?> updatePassword(@Valid @RequestBody PasswordUpdateAdminDto request) {
         administrativeService.updatePassword(request.email(), request.password());
         return ResponseEntity.noContent().build();
     }

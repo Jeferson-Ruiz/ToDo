@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.jr.todo.modules.user.dto.PasswordUpdateDto;
 import com.jr.todo.modules.user.service.IUserService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/user")
@@ -19,7 +20,7 @@ public class UserController {
   }
 
   @PatchMapping("/update-password")
-  public ResponseEntity<?> updatePassword(@RequestBody PasswordUpdateDto data) {
+  public ResponseEntity<?> updatePassword(@Valid @RequestBody PasswordUpdateDto data) {
     userService.updatePasswod(data.email(), data.oldPassword(), data.newPassword());
     return ResponseEntity.noContent().build();
   }

@@ -11,6 +11,7 @@ import com.jr.todo.dto.AuthRequest;
 import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.modules.auth.service.IAuthService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 
 @RestController
@@ -24,17 +25,17 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<?> login(@RequestBody AuthRequest request) {
+  public ResponseEntity<?> login(@Valid @RequestBody AuthRequest request) {
     return ResponseEntity.ok(authService.login(request));
   }
 
   @PostMapping("/register")
-  public ResponseEntity<?> register(@RequestBody UserCreateDto request) {
+  public ResponseEntity<?> register(@Valid @RequestBody UserCreateDto request) {
     return ResponseEntity.ok(authService.register(request));
   }
 
   @PostMapping("/resendemail")
-  public ResponseEntity<?> resendEmail(@RequestBody UserCreateDto request) {
+  public ResponseEntity<?> resendEmail(@Valid @RequestBody UserCreateDto request) {
     return ResponseEntity.ok(authService.resendActivationEmail(request));
   }
 
