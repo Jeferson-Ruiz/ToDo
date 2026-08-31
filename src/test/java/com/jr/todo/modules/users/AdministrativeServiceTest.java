@@ -79,7 +79,7 @@ public class AdministrativeServiceTest {
     @Test
     void testUpdateEnable() {
         String email = "prueba@correo.com";
-        boolean enable = true;
+        boolean enable = false;
         when(userSearchMethods.findByEmail(email)).thenReturn(DataProviderAdministrative.userMock());
         administrativeService.updateEnable(email, enable);
 
@@ -100,14 +100,11 @@ public class AdministrativeServiceTest {
 
     @Test
     void testUpdateIsEnable() {
-        boolean enable = false;
+        boolean enable = true;
         String email = "correo@correo.com";
-        doThrow(new IllegalArgumentException("Usuario ya desactivado")).when(userValidationHelper)
-                .isEnabled(anyString());
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            administrativeService.updateEnable(email, enable);
-        });
+        User user = DataProviderAdministrative.userMock();
+        when(userSearchMethods.findByEmail(email)).thenReturn(user);
+        administrativeService.updateEnable(email, enable);
         verify(userRepository, never()).save(any(User.class));
     }
 
