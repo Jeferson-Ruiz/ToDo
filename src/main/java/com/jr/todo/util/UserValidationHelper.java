@@ -1,5 +1,6 @@
 package com.jr.todo.util;
 
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.stereotype.Component;
 import com.jr.todo.modules.user.repository.UserRepository;
 
@@ -25,7 +26,7 @@ public class UserValidationHelper {
 
     public void isEnabled(String email) {
         if (!userRepository.isUserEnabled(email)) {
-            throw new IllegalAccessError("Usuario desactivado, validar mediante emial");
+            throw new DisabledException("Usuario desactivado, valida email");
         }
     }
 }
