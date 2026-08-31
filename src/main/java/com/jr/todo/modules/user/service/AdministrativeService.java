@@ -48,9 +48,9 @@ public class AdministrativeService implements IAdministrativeService {
     @Override
     public void updateEnable(String email, boolean enable) {
         User user = userSearchMethods.findByEmail(email);
-
-        userValidation.isEnabled(email);
-
+        if (user.isEnabled() == enable) {
+            return;
+        }
         user.setEnabled(enable);
         userRepository.save(user);
     }

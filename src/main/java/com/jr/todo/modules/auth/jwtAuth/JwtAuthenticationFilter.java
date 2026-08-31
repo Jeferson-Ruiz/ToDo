@@ -2,12 +2,10 @@ package com.jr.todo.modules.auth.jwtAuth;
 
 import java.io.IOException;
 import org.springframework.http.HttpHeaders;
-import java.util.List;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -28,6 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtService jwtService;
   private final ITokenBlacklistService tokenBlacklistService;
+  private final UserDetailsService userDetailsService;
   private final ObjectMapper objectMapper;
 
   @Override
@@ -58,11 +57,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     if (username != null && role != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-      UserDetails userDetails = new User(username, "", List.of(new SimpleGrantedAuthority("ROLE_" + role)));
+      UserDetails userDetails;
+      try {
+        userDetails = userDetailsService.loadUserByUsername(username);
+      } catch (Exception e) {
+        ApiError.write(request, response, objectMapper, HttpServletResponse.SC_UNAUTHORIZED, "Usuario no encontrado");
+        return;
+      }
+
+      if (!userDetails.isEnabled()) {
+        ApiError.write(request, response, objectMapper, HttpServletResponse.SC_UNAUTHORIZED, "Usuario desactivado, valida email");
+        return;
+      }
 
       if (jwtService.isTokenValid(token, userDetails)) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-            username,
+            userDetails.getUsername(),
             null,
             userDetails.getAuthorities());
 
