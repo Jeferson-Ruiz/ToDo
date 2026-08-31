@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.jr.todo.DataProviderAuth;
 import com.jr.todo.dto.AuthRequest;
@@ -97,10 +98,10 @@ public class AuthServiceTest {
         when(userSearchMethods.findByEmail(anyString())).thenReturn(DataProviderAuth.userMock());
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
-        doThrow(new IllegalArgumentException("Usuario desactivado")).when(userValidation)
+        doThrow(new DisabledException("Usuario desactivado")).when(userValidation)
                 .isEnabled(anyString());
 
-        assertThrows(IllegalArgumentException.class, () -> authService.login(authRequest));
+        assertThrows(DisabledException.class, () -> authService.login(authRequest));
         verify(jwtService, never()).getToken(any());
     }
 

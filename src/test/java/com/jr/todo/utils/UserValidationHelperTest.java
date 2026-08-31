@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.DisabledException;
 import com.jr.todo.modules.user.repository.UserRepository;
 import com.jr.todo.util.UserValidationHelper;
 
@@ -65,7 +66,7 @@ public class UserValidationHelperTest {
     void testIsEnabledErrorDisabled() {
         String email = "prueba@correo.com";
         when(userRepository.isUserEnabled(email)).thenReturn(false);
-        assertThrows(IllegalAccessError.class,
+        assertThrows(DisabledException.class,
                 () -> userValidationHelper.isEnabled(email));
         verify(userRepository).isUserEnabled(email);
     }
