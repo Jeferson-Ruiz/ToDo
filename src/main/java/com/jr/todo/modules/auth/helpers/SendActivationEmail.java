@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.jr.todo.modules.auth.entity.AccountActivationToken;
 import com.jr.todo.modules.auth.repository.AccountActivationTokenRepository;
@@ -15,6 +16,9 @@ public class SendActivationEmail {
 
     private final AccountActivationTokenRepository activationTokenRepository;
     private final EmailTemplateSender emailSender;
+
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
 
     public SendActivationEmail(AccountActivationTokenRepository activationTokenRepository,
             EmailTemplateSender emailSender) {
@@ -36,8 +40,10 @@ public class SendActivationEmail {
 
         // variables de la plantilla
         Map<String, Object> variables = new HashMap<>();
-        variables.put("username", user.getUsername());
-        variables.put("activationUrl", "http://localhost:8081/auth/activation?token=" + token);
+        variables.put("userName", user.getName() != null ? user.getName() : user.getUsername());
+        variables.put("username", user.getName() != null ? user.getName() : user.getUsername());
+        variables.put("activationUrl", frontendUrl + "/activation?token=" + token);
+        variables.put("backendActivationUrl", "http://localhost:8081/auth/activation?token=" + token);
         variables.put("expirationHours", "24");
         variables.put("currentYear", String.valueOf(LocalDate.now().getYear()));
 
