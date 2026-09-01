@@ -1,6 +1,7 @@
 package com.jr.todo.modules.auth.config;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -24,6 +25,12 @@ public class SecurityConfig {
   private final AuthenticationProvider authProvider;
   private final ObjectMapper objectMapper;
 
+  @Value("${app.env:dev}")
+  private String env;
+
+  @Value("${app.frontend.url:http://localhost:5173}")
+  private String frontendUrl;
+
   SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, AuthenticationProvider authProvider,
       ObjectMapper objectMapper) {
     this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -37,8 +44,10 @@ public class SecurityConfig {
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .csrf(csrf -> csrf.disable())
         .exceptionHandling(ex -> ex
-            .authenticationEntryPoint((request, response, authException) -> ApiError.write(request, response, objectMapper, 401, "No autenticado"))
-            .accessDeniedHandler((request, response, accessDeniedException) -> ApiError.write(request, response, objectMapper, 403, "Acceso denegado")))
+            .authenticationEntryPoint((request, response, authException) -> ApiError.write(request, response,
+                objectMapper, 401, "No autenticado"))
+            .accessDeniedHandler((request, response, accessDeniedException) -> ApiError.write(request, response,
+                objectMapper, 403, "Acceso denegado")))
         .authorizeHttpRequests(authRequest -> authRequest
             .requestMatchers("/auth/**", "/recovery/**").permitAll()
             .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -52,7 +61,11 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration cfg = new CorsConfiguration();
-    cfg.setAllowedOriginPatterns(List.of("*"));
+    if ("prod".equalsIgnoreCase(env)) {
+      cfg.setAllowedOriginPatterns(List.of(frontendUrl));
+    } else {
+      cfg.setAllowedOriginPatterns(List.of("*"));
+    }
     cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
     cfg.setAllowedHeaders(List.of("*"));
     cfg.setExposedHeaders(List.of("Authorization"));
