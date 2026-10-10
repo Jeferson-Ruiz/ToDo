@@ -11,6 +11,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
@@ -54,7 +56,8 @@ public class TaskServiceTest {
     void setupSecurity() {
         var auth = new UsernamePasswordAuthenticationToken("pedro@correo.com", null, List.of());
         SecurityContextHolder.getContext().setAuthentication(auth);
-        lenient().when(userRepository.findByEmail("pedro@correo.com")).thenReturn(Optional.of(DataProviderCategory.userMock()));
+        lenient().when(userRepository.findByEmail("pedro@correo.com"))
+                .thenReturn(Optional.of(DataProviderCategory.userMock()));
     }
 
     @AfterEach
@@ -74,7 +77,8 @@ public class TaskServiceTest {
 
     @Test
     void testCreateTaskErrorCategory() {
-        TaskCreateDto taskDto = new TaskCreateDto("prueba", "prueba", Status.FINALIZADA, null, Priority.ALTA, "Inexistente");
+        TaskCreateDto taskDto = new TaskCreateDto("prueba", "prueba", Status.FINALIZADA, null, Priority.ALTA,
+                "Inexistente");
         when(taskRepository.existsByNameAndUserId(anyString(), anyLong())).thenReturn(false);
         when(categoryRepository.findByNameAndUserId(eq("Inexistente"), anyLong())).thenReturn(Optional.empty());
 
@@ -120,10 +124,12 @@ public class TaskServiceTest {
 
     @Test
     void testCreateTaskSuccessWithCategory() {
-        TaskCreateDto taskDto = new TaskCreateDto("prueba", "prueba", Status.FINALIZADA, null, Priority.ALTA, "Trabajo");
+        TaskCreateDto taskDto = new TaskCreateDto("prueba", "prueba", Status.FINALIZADA, null, Priority.ALTA,
+                "Trabajo");
 
         when(taskRepository.existsByNameAndUserId(anyString(), anyLong())).thenReturn(false);
-        when(categoryRepository.findByNameAndUserId(eq("Trabajo"), anyLong())).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
+        when(categoryRepository.findByNameAndUserId(eq("Trabajo"), anyLong()))
+                .thenReturn(Optional.of(DataProviderCategory.categoryMock()));
         when(taskRepository.save(any(Task.class))).thenAnswer(inv -> inv.getArgument(0));
 
         TaskResponseDto result = taskService.createTask(taskDto);
@@ -146,7 +152,8 @@ public class TaskServiceTest {
     @Test
     void testGetAllByCategory() {
         String categoryName = "Trabajo";
-        when(taskRepository.findAllByCategoryAndUserId(anyString(), anyLong())).thenReturn(DataProviderTask.listTaskMock());
+        when(taskRepository.findAllByCategoryAndUserId(anyString(), anyLong()))
+                .thenReturn(DataProviderTask.listTaskMock());
         List<TaskResponseDto> result = taskService.getAllByCategory(categoryName);
         assertNotNull(result);
         verify(taskRepository).findAllByCategoryAndUserId(eq("Trabajo"), anyLong());
@@ -164,7 +171,8 @@ public class TaskServiceTest {
     @Test
     void testGetTaskByName() {
         String taskName = "prueba";
-        when(taskRepository.findTaskByNameAndUserId(anyString(), anyLong())).thenReturn(Optional.of(DataProviderTask.taskMock()));
+        when(taskRepository.findTaskByNameAndUserId(anyString(), anyLong()))
+                .thenReturn(Optional.of(DataProviderTask.taskMock()));
         TaskResponseDto taskDto = taskService.getTaskByName(taskName);
 
         assertEquals("Prueba", taskDto.name());
@@ -190,12 +198,14 @@ public class TaskServiceTest {
 
     @Test
     void testGetAllTaskByDate() {
-        LocalDateTime date = LocalDateTime.now();
-        when(taskRepository.findTasksByDateAndUserId(any(), anyLong())).thenReturn(DataProviderTask.listTaskMock());
-        List<TaskResponseDto> result = taskService.getAllTaskByDate(date);
+        LocalDate init = LocalDate.now();
+        LocalDate end = LocalDate.now().plusDays(1l);
+        when(taskRepository.findTasksByDateAndUserId(any(), any(), anyLong()))
+                .thenReturn(DataProviderTask.listTaskMock());
+        List<TaskResponseDto> result = taskService.getAllTaskByDate(init, end);
 
         assertNotNull(result);
-        verify(taskRepository).findTasksByDateAndUserId(eq(date), anyLong());
+        verify(taskRepository).findTasksByDateAndUserId(eq(init.atStartOfDay()), eq(end.atTime(LocalTime.MAX)), anyLong());
         assertEquals("Prueba", result.get(0).name());
     }
 
@@ -224,7 +234,8 @@ public class TaskServiceTest {
     void testUpdateTaskName() {
         Long id = 1L;
         String newName = "update";
-        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(DataProviderTask.taskMock()));
+        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong()))
+                .thenReturn(Optional.of(DataProviderTask.taskMock()));
         taskService.updateTaskName(id, newName);
 
         ArgumentCaptor<Task> captor = ArgumentCaptor.forClass(Task.class);
@@ -258,7 +269,8 @@ public class TaskServiceTest {
     void testUpdateTaskDescription() {
         Long id = 1L;
         String description = "prueba";
-        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(DataProviderTask.taskMock()));
+        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong()))
+                .thenReturn(Optional.of(DataProviderTask.taskMock()));
         taskService.updateTaskDescription(id, description);
 
         ArgumentCaptor<Task> captor = ArgumentCaptor.forClass(Task.class);
@@ -281,7 +293,8 @@ public class TaskServiceTest {
     void testUpdateTaskStatus() {
         Long id = 1L;
         Status status = Status.PENDIENTE;
-        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(DataProviderTask.taskMock()));
+        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong()))
+                .thenReturn(Optional.of(DataProviderTask.taskMock()));
         taskService.updateTaskStatus(id, status);
         ArgumentCaptor<Task> captor = ArgumentCaptor.forClass(Task.class);
         verify(taskRepository).findByTaskIdAndUserId(eq(id), anyLong());
@@ -303,7 +316,8 @@ public class TaskServiceTest {
     void testUpdateDeadline() {
         Long id = 1L;
         LocalDateTime newDate = LocalDateTime.now().plusHours(2);
-        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(DataProviderTask.taskMock()));
+        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong()))
+                .thenReturn(Optional.of(DataProviderTask.taskMock()));
         taskService.updateDeadline(id, newDate);
 
         ArgumentCaptor<Task> captor = ArgumentCaptor.forClass(Task.class);
@@ -327,7 +341,8 @@ public class TaskServiceTest {
     void testUpdateDeadlineBadRequest() {
         Long id = 1L;
         LocalDateTime newDate = LocalDateTime.now().minusHours(2);
-        when(taskRepository.findByTaskIdAndUserId(eq(id), anyLong())).thenReturn(Optional.of(DataProviderTask.taskMock()));
+        when(taskRepository.findByTaskIdAndUserId(eq(id), anyLong()))
+                .thenReturn(Optional.of(DataProviderTask.taskMock()));
         assertThrows(IllegalArgumentException.class, () -> {
             taskService.updateDeadline(id, newDate);
         });
@@ -337,7 +352,8 @@ public class TaskServiceTest {
     void testUpdatePriority() {
         Long id = 1L;
         Priority newPriority = Priority.ALTA;
-        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(DataProviderTask.taskMock()));
+        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong()))
+                .thenReturn(Optional.of(DataProviderTask.taskMock()));
         taskService.updatePriority(id, newPriority);
 
         ArgumentCaptor<Task> captor = ArgumentCaptor.forClass(Task.class);
@@ -361,8 +377,10 @@ public class TaskServiceTest {
         Long id = 1L;
         String category = "Trabajo";
 
-        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(DataProviderTask.taskMock()));
-        when(categoryRepository.findByNameAndUserId(eq(category), anyLong())).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
+        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong()))
+                .thenReturn(Optional.of(DataProviderTask.taskMock()));
+        when(categoryRepository.findByNameAndUserId(eq(category), anyLong()))
+                .thenReturn(Optional.of(DataProviderCategory.categoryMock()));
 
         taskService.updateCategory(id, category);
 
@@ -379,7 +397,8 @@ public class TaskServiceTest {
         Long id = 1L;
         String category = "Trabajo";
 
-        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(DataProviderTask.taskMock()));
+        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong()))
+                .thenReturn(Optional.of(DataProviderTask.taskMock()));
         when(categoryRepository.findByNameAndUserId(anyString(), anyLong())).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> {
             taskService.updateCategory(id, category);
@@ -390,7 +409,8 @@ public class TaskServiceTest {
     @Test
     void testDeleteTask() {
         Long id = 1L;
-        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(DataProviderTask.taskMock()));
+        when(taskRepository.findByTaskIdAndUserId(anyLong(), anyLong()))
+                .thenReturn(Optional.of(DataProviderTask.taskMock()));
         taskService.deleteTask(id);
         ArgumentCaptor<Task> captor = ArgumentCaptor.forClass(Task.class);
         verify(taskRepository).delete(captor.capture());
