@@ -22,8 +22,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
   @Query("SELECT t FROM Task t WHERE t.taskId = :id AND t.user.id = :userId")
   Optional<Task> findByTaskIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
 
-  @Query("SELECT t FROM Task t WHERE t.dateCreation = :dateCreation AND t.user.id = :userId")
-  List<Task> findTasksByDateAndUserId(@Param("dateCreation") LocalDateTime dateCreation, @Param("userId") Long userId);
+  @Query("SELECT t FROM Task t WHERE t.deadline BETWEEN :start  AND :end AND t.user =:user")
+  List<Task> findTasksByDateAndUserId(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end,
+      @Param("user") Long user);
 
   @Query("SELECT t FROM Task t WHERE t.status = :status AND t.user.id = :userId")
   List<Task> findTasksByStatusAndUserId(@Param("status") Status status, @Param("userId") Long userId);
