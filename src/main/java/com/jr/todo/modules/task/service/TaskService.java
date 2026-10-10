@@ -1,6 +1,8 @@
 package com.jr.todo.modules.task.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,8 @@ public class TaskService implements ITaskService {
   private final CategoryRepository categoryRepository;
   private final UserRepository userRepository;
 
-  public TaskService(TaskRepository taskRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
+  public TaskService(TaskRepository taskRepository, CategoryRepository categoryRepository,
+      UserRepository userRepository) {
     this.taskRepository = taskRepository;
     this.categoryRepository = categoryRepository;
     this.userRepository = userRepository;
@@ -90,8 +93,19 @@ public class TaskService implements ITaskService {
   }
 
   @Override
-  public List<TaskResponseDto> getAllTaskByDate(LocalDateTime date) {
-    List<Task> tasks = taskRepository.findTasksByDateAndUserId(date, currentUser().getId());
+  public List<TaskResponseDto> getAllTaskByDate(LocalDate dateInit, LocalDate dateFinish) {
+    if (dateInit == null) throw new IllegalArgumentException("Fecha de inicio obligatoria");
+    if (dateInit.isAfter(dateFinish)) throw new  IllegalArgumentException("Rango invalido");
+
+    if (dateFinish == null) {
+      dateFinish = dateInit;
+    }
+
+    long userId = currentUser().getId();
+    LocalDateTime start = dateInit.atStartOfDay();
+    LocalDateTime end = dateFinish.atTime(LocalTime.MAX);
+
+    List<Task> tasks = taskRepository.findTasksByDateAndUserId(start, end, userId);
     return mapToDto(tasks);
   }
 

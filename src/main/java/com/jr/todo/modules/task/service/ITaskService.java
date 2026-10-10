@@ -1,8 +1,8 @@
 package com.jr.todo.modules.task.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import com.jr.todo.modules.task.dto.TaskCreateDto;
 import com.jr.todo.modules.task.dto.TaskResponseDto;
 import com.jr.todo.modules.task.enums.Priority;
@@ -18,7 +18,7 @@ public interface ITaskService {
 
   TaskResponseDto getTaskByName(String name);
 
-  List<TaskResponseDto> getAllTaskByDate(LocalDateTime date);
+  List<TaskResponseDto> getAllTaskByDate(LocalDate dateInit, LocalDate dateFinish);
 
   List<TaskResponseDto> getAllTaskByStatus(Status status);
 
