@@ -1,7 +1,6 @@
 package com.jr.todo.modules.task.dto;
 
 import java.time.LocalDateTime;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.jr.todo.modules.task.entity.Task;
 import com.jr.todo.modules.task.enums.Priority;
 import com.jr.todo.modules.task.enums.Status;
@@ -16,7 +15,7 @@ public record TaskCreateDto(
 
     Status status,
 
-    @Future(message = "La fecha limite debe ser futura") @JsonFormat(pattern = "dd/MM/yyyy HH:mm") LocalDateTime deadline,
+    @Future(message = "La fecha limite debe ser futura") LocalDateTime deadline,
 
     Priority priority,
 
