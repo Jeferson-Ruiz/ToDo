@@ -1,5 +1,6 @@
 package com.jr.todo.modules.task.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,8 +62,9 @@ public class TaskController {
 
   @GetMapping("/date")
   public ResponseEntity<?> getAllByDate(
-      @RequestParam @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm") java.time.LocalDateTime date) {
-    List<TaskResponseDto> taskDtos = taskService.getAllTaskByDate(date);
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateInit,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEnd) {
+    List<TaskResponseDto> taskDtos = taskService.getAllTaskByDate(dateInit, dateEnd);
     return ResponseEntity.ok(taskDtos);
   }
 
@@ -86,7 +88,8 @@ public class TaskController {
   }
 
   @PatchMapping("/update/description/{id}")
-  public ResponseEntity<?> updateTaskDescription(@PathVariable Long id, @Valid @RequestBody DescriptionDto newDescription) {
+  public ResponseEntity<?> updateTaskDescription(@PathVariable Long id,
+      @Valid @RequestBody DescriptionDto newDescription) {
     taskService.updateTaskDescription(id, newDescription.description());
     return ResponseEntity.noContent().build();
   }
