@@ -1,5 +1,6 @@
 package com.jr.todo.modules.category.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import com.jr.todo.modules.category.dto.CategoryCreateDto;
 import com.jr.todo.modules.category.dto.CategoryResponseDto;
@@ -17,5 +18,7 @@ public interface ICategoryService {
   void updateDescription(Long id, String description);
 
   void delete(Long id);
+
+  List<CategoryResponseDto> findAllCategoriesByDates(LocalDate dateInit, LocalDate dateFinish);
 
 }

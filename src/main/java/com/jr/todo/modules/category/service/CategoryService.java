@@ -1,5 +1,8 @@
 package com.jr.todo.modules.category.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -10,6 +13,7 @@ import com.jr.todo.modules.category.repository.CategoryRepository;
 import com.jr.todo.modules.task.repository.TaskRepository;
 import com.jr.todo.modules.user.entity.User;
 import com.jr.todo.util.CurrentUser;
+import com.jr.todo.util.DateValidationsHelper;
 import com.jr.todo.util.TextFormat;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -44,9 +48,19 @@ public class CategoryService implements ICategoryService {
   @Override
   public List<CategoryResponseDto> findAll() {
     List<Category> categories = categoryRepository.findAllByUserId(currentUser.currentUser().getId());
-    return categories.stream()
-        .map(CategoryResponseDto::toDto)
-        .collect(Collectors.toList());
+    return toDto(categories);
+  }
+  
+  @Override 
+  public List<CategoryResponseDto> findAllCategoriesByDates(LocalDate dateInit, LocalDate dateFinish) {
+    DateValidationsHelper.dateValidation(dateInit, dateFinish);
+
+    long userId = currentUser.currentUser().getId();
+    LocalDateTime start = dateInit.atStartOfDay();
+    LocalDateTime end = dateFinish.atTime(LocalTime.MAX);
+
+    List<Category> categoriesList = categoryRepository.findByDateAndUserId(userId, start, end);
+    return toDto(categoriesList);
   }
 
   @Override
@@ -95,6 +109,12 @@ public class CategoryService implements ICategoryService {
     Category category = categoryRepository.findByCategoryIdAndUserId(id, userId)
         .orElseThrow(() -> new EntityNotFoundException("Categoria no encontrada"));
     return category;
+  }
+
+  private List<CategoryResponseDto> toDto(List<Category> categories) {
+    return categories.stream()
+        .map(CategoryResponseDto::toDto)
+        .collect(Collectors.toList());
   }
 
 }
