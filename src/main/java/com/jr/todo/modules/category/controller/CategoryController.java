@@ -1,6 +1,8 @@
 package com.jr.todo.modules.category.controller;
 
+import java.time.LocalDate;
 import java.util.List;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +38,14 @@ public class CategoryController {
   @GetMapping("/all")
   public ResponseEntity<?> getAll() {
     List<CategoryResponseDto> categoryDto = categoryService.findAll();
+    return ResponseEntity.ok(categoryDto);
+  }
+
+  @GetMapping("/date")
+  public ResponseEntity<?> getAllByDate(
+      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateInit,
+      @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEnd) {
+    List<CategoryResponseDto> categoryDto = categoryService.findAllCategoriesByDates(null, null);
     return ResponseEntity.ok(categoryDto);
   }
 
