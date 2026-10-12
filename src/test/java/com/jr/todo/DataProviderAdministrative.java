@@ -1,6 +1,6 @@
 package com.jr.todo;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.enums.Role;
 import com.jr.todo.modules.user.entity.User;
@@ -12,7 +12,8 @@ public class DataProviderAdministrative {
     }
 
     public static User userMock() {
-        return new User(1L, "user", "user", "user@correo.com", "user", "userPassword", true, Role.USER, LocalDate.now(),
+        return new User(1L,
+                "user", "user", "user@correo.com", "user", "userPassword", true, Role.USER, LocalDateTime.now(),
                 null, null);
     }
 }

@@ -1,8 +1,7 @@
 package com.jr.todo.modules.auth.service;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,7 +68,8 @@ public class JwtServiceTest {
         UserDetails userDetails1 = DataProviderUser.UserMock();
         String token = jwtService.getToken(userDetails1);
         UserDetails userDetails2 = DataProviderUser.UserMock();
-        userDetails2 = new User(2L, "user", "user", "correo2@correo.com" , "user2", "pass", true, Role.USER, LocalDate.now(), null, null);
+        userDetails2 = new User(2L, "user", "user", "correo2@correo.com", "user2", "pass", true, Role.USER,
+                LocalDateTime.now(), null, null);
         assertFalse(jwtService.isTokenValid(token, userDetails2));
     }
 

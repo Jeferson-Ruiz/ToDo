@@ -1,8 +1,6 @@
 package com.jr.todo;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import com.jr.todo.dto.AuthRequest;
 import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.enums.Role;
@@ -17,7 +15,7 @@ public class DataProviderAuth {
 
     public static User userMock() {
         return new User(1L, "usuario", "usuario", "correo@correo.com", "usuario", "password", false, Role.USER,
-                LocalDate.now(), null, null);
+                LocalDateTime.now(), null, null);
     }
 
     public static UserCreateDto userCreateDtoMock() {

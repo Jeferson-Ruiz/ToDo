@@ -1,6 +1,7 @@
 package com.jr.todo.modules.user.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
@@ -61,7 +62,7 @@ public class User implements UserDetails {
   private Role role;
 
   @Column(name = "_usr_fecha_registro")
-  private LocalDate registrationDte;
+  private LocalDateTime registrationDte;
 
   @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   private AccountActivationToken accountActivationToken;

@@ -1,6 +1,5 @@
 package com.jr.todo.modules.auth.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -73,7 +72,7 @@ public class AuthService implements IAuthService {
     user.setUsername(username);
     user.setPassword(passwordEncoder.encode(request.password()));
     user.setRole(Role.USER);
-    user.setRegistrationDte(LocalDate.now());
+    user.setRegistrationDte(LocalDateTime.now());
     userRepository.save(user);
     sendActivationEmail.sendActivationEmail(user);
     return "Registro exitoso, revisa tu email para activar tu cuenta";

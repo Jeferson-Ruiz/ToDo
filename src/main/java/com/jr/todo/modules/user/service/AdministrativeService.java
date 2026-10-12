@@ -1,6 +1,6 @@
 package com.jr.todo.modules.user.service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.jr.todo.dto.UserCreateDto;
@@ -40,10 +40,11 @@ public class AdministrativeService implements IAdministrativeService {
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(userDto.password()));
         user.setEnabled(true);
-        user.setRegistrationDte(LocalDate.now());
+        user.setRegistrationDte(LocalDateTime.now());
 
         return UserResponseDto.toDto(userRepository.save(user));
     }
+    
 
     @Override
     public void updateEnable(String email, boolean enable) {

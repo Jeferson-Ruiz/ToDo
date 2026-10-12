@@ -1,6 +1,6 @@
 package com.jr.todo.modules.user.dto;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.jr.todo.modules.user.entity.User;
 
@@ -12,7 +12,7 @@ public record UserResponseDto(
     String username,
     String password,
     boolean enable,
-    LocalDate registrationDte) {
+    LocalDateTime registrationDte) {
 
   public static UserResponseDto toDto(User user) {
     return new UserResponseDto(
