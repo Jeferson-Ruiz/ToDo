@@ -16,6 +16,7 @@ import com.jr.todo.modules.task.enums.Status;
 import com.jr.todo.modules.task.repository.TaskRepository;
 import com.jr.todo.modules.user.entity.User;
 import com.jr.todo.util.CurrentUser;
+import com.jr.todo.util.DateValidationsHelper;
 import com.jr.todo.util.TextFormat;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -88,15 +89,7 @@ public class TaskService implements ITaskService {
 
   @Override
   public List<TaskResponseDto> getAllTaskByDate(LocalDate dateInit, LocalDate dateFinish) {
-    if (dateInit == null)
-      throw new IllegalArgumentException("Fecha de inicio obligatoria");
-    if (dateInit.isAfter(dateFinish))
-      throw new IllegalArgumentException("Rango invalido");
-
-    if (dateFinish == null) {
-      dateFinish = dateInit;
-    }
-
+    DateValidationsHelper.dateValidation(dateInit, dateFinish);
     long userId = currentUser.currentUser().getId();
     LocalDateTime start = dateInit.atStartOfDay();
     LocalDateTime end = dateFinish.atTime(LocalTime.MAX);
