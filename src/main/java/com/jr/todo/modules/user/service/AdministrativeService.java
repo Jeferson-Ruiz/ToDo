@@ -1,6 +1,10 @@
 package com.jr.todo.modules.user.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.jr.todo.dto.UserCreateDto;
@@ -8,6 +12,7 @@ import com.jr.todo.enums.Role;
 import com.jr.todo.modules.user.dto.UserResponseDto;
 import com.jr.todo.modules.user.entity.User;
 import com.jr.todo.modules.user.repository.UserRepository;
+import com.jr.todo.util.DateValidationsHelper;
 import com.jr.todo.util.UserSearchMethods;
 import com.jr.todo.util.UserValidationHelper;
 
@@ -41,10 +46,30 @@ public class AdministrativeService implements IAdministrativeService {
         user.setPassword(passwordEncoder.encode(userDto.password()));
         user.setEnabled(true);
         user.setRegistrationDte(LocalDateTime.now());
-
         return UserResponseDto.toDto(userRepository.save(user));
     }
-    
+
+    @Override
+    public List<UserResponseDto> findAllUsers() {
+        List<User> users = userRepository.findAll();
+        return toDto(users);
+    }
+
+    @Override
+    public List<UserResponseDto> findAllByDate(LocalDate dateInit, LocalDate dateFinish) {
+        LocalDateTime start = dateInit.atStartOfDay();
+        LocalDateTime end = dateFinish.atTime(LocalTime.MAX);
+
+        DateValidationsHelper.dateValidation(dateInit, dateFinish);
+        List<User> users = userRepository.findAllByDate(start, end);
+        return toDto(users);
+    }
+
+    @Override 
+    public List<UserResponseDto> findAllByRole(Role role){
+        List<User> users = userRepository.findAllByRole(role);
+        return toDto(users);
+    }
 
     @Override
     public void updateEnable(String email, boolean enable) {
@@ -72,4 +97,10 @@ public class AdministrativeService implements IAdministrativeService {
         userRepository.save(user);
     }
 
+    // Helpers
+    private List<UserResponseDto> toDto(List<User> users) {
+        return users.stream()
+                .map(UserResponseDto::toDto)
+                .collect(Collectors.toList());
+    }
 }

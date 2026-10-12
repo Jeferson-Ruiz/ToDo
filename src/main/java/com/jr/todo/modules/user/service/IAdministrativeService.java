@@ -1,5 +1,8 @@
 package com.jr.todo.modules.user.service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.enums.Role;
 import com.jr.todo.modules.user.dto.UserResponseDto;
@@ -12,5 +15,11 @@ public interface IAdministrativeService {
     public void updateRole(String email, Role role);
 
     public void updatePassword(String email, String newPassword);
+
+    List<UserResponseDto> findAllUsers();
+
+    List<UserResponseDto> findAllByDate(LocalDate dateInit, LocalDate dateFinish);
+
+    List<UserResponseDto> findAllByRole(Role role);
 
 }
