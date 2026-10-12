@@ -21,8 +21,8 @@ public class UserService implements IUserService {
   }
 
   @Override
-  public void updatePasswod(String email, String oldPassword, String newPassword) {
-    User user = userSearchMethods.findByEmail(email);
+  public void updatePasswod(long id, String oldPassword, String newPassword) {
+    User user = userSearchMethods.findUserById(id);
 
     if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
       throw new IllegalArgumentException("Error de validacion de contraseña");

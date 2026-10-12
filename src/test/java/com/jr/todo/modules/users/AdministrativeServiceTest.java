@@ -2,6 +2,7 @@ package com.jr.todo.modules.users;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -78,10 +79,10 @@ public class AdministrativeServiceTest {
 
     @Test
     void testUpdateEnable() {
-        String email = "prueba@correo.com";
+        long id = 1L;
         boolean enable = false;
-        when(userSearchMethods.findByEmail(email)).thenReturn(DataProviderAdministrative.userMock());
-        administrativeService.updateEnable(email, enable);
+        when(userSearchMethods.findUserById(id)).thenReturn(DataProviderAdministrative.userMock());
+        administrativeService.updateEnable(id, enable);
 
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(captor.capture());
@@ -90,31 +91,30 @@ public class AdministrativeServiceTest {
 
     @Test
     void testUpdateUserNotFound() {
-        String email = "correo@correo.com";
         doThrow(new EntityNotFoundException("usuario no encontado"))
-                .when(userSearchMethods).findByEmail(anyString());
+                .when(userSearchMethods).findUserById(anyLong());
         assertThrows(EntityNotFoundException.class, () -> {
-            administrativeService.updateEnable(email, true);
+            administrativeService.updateEnable(1L, true);
         });
     }
 
     @Test
     void testUpdateIsEnable() {
         boolean enable = true;
-        String email = "correo@correo.com";
+        long id = 1L;
         User user = DataProviderAdministrative.userMock();
-        when(userSearchMethods.findByEmail(email)).thenReturn(user);
-        administrativeService.updateEnable(email, enable);
+        when(userSearchMethods.findUserById(id)).thenReturn(user);
+        administrativeService.updateEnable(id, enable);
         verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
     void testUpdateRole() {
-        String email = "correo@correo.com";
+        long id = 1L;
         Role role = Role.ADMIN;
 
-        when(userSearchMethods.findByEmail(anyString())).thenReturn(DataProviderAdministrative.userMock());
-        administrativeService.updateRole(email, role);
+        when(userSearchMethods.findUserById(anyLong())).thenReturn(DataProviderAdministrative.userMock());
+        administrativeService.updateRole(id, role);
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
 
         verify(userRepository).save(captor.capture());
@@ -123,25 +123,25 @@ public class AdministrativeServiceTest {
 
     @Test
     void testUpdateRoleUserNotFound() {
-        String email = "correo@correo.com";
+        long id = 1L;
         Role role = Role.ADMIN;
-        doThrow(new EntityNotFoundException("Usuario no encontrado")).when(userSearchMethods).findByEmail(anyString());
+        doThrow(new EntityNotFoundException("Usuario no encontrado")).when(userSearchMethods).findUserById(anyLong());
         assertThrows(EntityNotFoundException.class, () -> {
-            administrativeService.updateRole(email, role);
+            administrativeService.updateRole(id, role);
         });
         verify(userRepository, never()).save(any(User.class));
     }
 
     @Test
     void testUpdatePassword() {
-        String email = "correo@correo.com";
+        long id = 1L;
         String newPassword = "passwordPlano";
         String passwordEncriptada = "passwordEncriptada";
 
-        when(userSearchMethods.findByEmail(anyString())).thenReturn(DataProviderAdministrative.userMock());
+        when(userSearchMethods.findUserById(anyLong())).thenReturn(DataProviderAdministrative.userMock());
         when(passwordEncoder.encode(newPassword)).thenReturn(passwordEncriptada);
 
-        administrativeService.updatePassword(email, newPassword);
+        administrativeService.updatePassword(id, newPassword);
 
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(captor.capture());
@@ -150,14 +150,14 @@ public class AdministrativeServiceTest {
 
     @Test
     void testUpdatePasswordUserNotFound() {
-        String email = "correo@correo.com";
+        long id = 1L;
         String newPassword = "passwordPlano";
 
         doThrow(new EntityNotFoundException("Usuario no encontrado"))
-                .when(userSearchMethods).findByEmail(anyString());
+                .when(userSearchMethods).findUserById(anyLong());
 
         assertThrows(EntityNotFoundException.class, () -> {
-            administrativeService.updatePassword(email, newPassword);
+            administrativeService.updatePassword(id, newPassword);
         });
         verify(userRepository, never()).save(any(User.class));
     }

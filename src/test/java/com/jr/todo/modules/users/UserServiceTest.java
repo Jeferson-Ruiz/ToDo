@@ -2,6 +2,7 @@ package com.jr.todo.modules.users;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -38,15 +39,15 @@ public class UserServiceTest {
 
     @Test
     void testUpdatePasswod() {
-        String email = "prueba@correo.com";
+        long id = 1L;
         String oldPassword = "oldPassword";
         String newPassword = "newPassword";
 
-        when(userSearchMethods.findByEmail(anyString())).thenReturn(DataProviderUser.UserMock());
+        when(userSearchMethods.findUserById(anyLong())).thenReturn(DataProviderUser.UserMock());
         when(passwordEncoder.matches(oldPassword, "password1")).thenReturn(true);
         when(passwordEncoder.encode(anyString())).thenReturn("nuevoHash");
 
-        userService.updatePasswod(email, oldPassword, newPassword);
+        userService.updatePasswod(id, oldPassword, newPassword);
 
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
         verify(userRepository).save(captor.capture());
@@ -56,14 +57,13 @@ public class UserServiceTest {
 
     @Test
     void updatePasswodUserNotFound() {
-        String email = "prueba@correo.com";
         String oldPassword = "oldPassword";
         String newPassword = "newPassword";
-        when(userSearchMethods.findByEmail(anyString()))
+        when(userSearchMethods.findUserById(anyLong()))
                 .thenThrow(new EntityNotFoundException("Usuario no encontrado"));
 
         assertThrows(EntityNotFoundException.class, () -> {
-            userService.updatePasswod(email, oldPassword, newPassword);
+            userService.updatePasswod(1L, oldPassword, newPassword);
         });
 
         verify(userRepository, never()).save(any());
@@ -71,14 +71,13 @@ public class UserServiceTest {
 
     @Test
     void updatePasswodUserNotMatches() {
-        String email = "prueba@correo.com";
         String oldPassword = "oldPassword";
         String newPassword = "newPassword";
 
-        when(userSearchMethods.findByEmail(anyString())).thenReturn(DataProviderUser.UserMock());
+        when(userSearchMethods.findUserById(anyLong())).thenReturn(DataProviderUser.UserMock());
         when(passwordEncoder.matches(oldPassword, "password1")).thenReturn(false);
         assertThrows(IllegalArgumentException.class, () -> {
-            userService.updatePasswod(email, oldPassword, newPassword);
+            userService.updatePasswod(1L, oldPassword, newPassword);
         });
 
         verify(userRepository, never()).save(any());

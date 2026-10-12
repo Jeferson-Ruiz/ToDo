@@ -58,19 +58,19 @@ public class AdmistrativeController {
 
     @PatchMapping("/update-enable")
     public ResponseEntity<?> updateEnable(@Valid @RequestBody EnableUpdateDto data) {
-        administrativeService.updateEnable(data.email(), data.enable());
+        administrativeService.updateEnable(data.id(), data.enable());
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/update-role")
     public ResponseEntity<?> updateRole(@Valid @RequestBody UpdateRoleDto data) {
-        administrativeService.updateRole(data.email(), data.role());
+        administrativeService.updateRole(data.id(), data.role());
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/update-password")
     public ResponseEntity<?> updatePassword(@Valid @RequestBody PasswordUpdateAdminDto request) {
-        administrativeService.updatePassword(request.email(), request.password());
+        administrativeService.updatePassword(request.id(), request.password());
         return ResponseEntity.noContent().build();
     }
 

@@ -14,6 +14,12 @@ public class UserSearchMethods {
         this.userRepository = userRepository;
     }
 
+    public User findUserById(long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        return user;
+    }
+
     public User findByEmail(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));

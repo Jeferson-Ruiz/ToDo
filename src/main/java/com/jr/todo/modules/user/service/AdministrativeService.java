@@ -65,15 +65,15 @@ public class AdministrativeService implements IAdministrativeService {
         return toDto(users);
     }
 
-    @Override 
-    public List<UserResponseDto> findAllByRole(Role role){
+    @Override
+    public List<UserResponseDto> findAllByRole(Role role) {
         List<User> users = userRepository.findAllByRole(role);
         return toDto(users);
     }
 
     @Override
-    public void updateEnable(String email, boolean enable) {
-        User user = userSearchMethods.findByEmail(email);
+    public void updateEnable(long id, boolean enable) {
+        User user = userSearchMethods.findUserById(id);
         if (user.isEnabled() == enable) {
             return;
         }
@@ -82,15 +82,15 @@ public class AdministrativeService implements IAdministrativeService {
     }
 
     @Override
-    public void updateRole(String email, Role role) {
-        User user = userSearchMethods.findByEmail(email);
+    public void updateRole(long id, Role role) {
+        User user = userSearchMethods.findUserById(id);
         user.setRole(role);
         userRepository.save(user);
     }
 
     @Override
-    public void updatePassword(String email, String newPassword) {
-        User user = userSearchMethods.findByEmail(email);
+    public void updatePassword(long id, String newPassword) {
+        User user = userSearchMethods.findUserById(id);
 
         String savePassword = newPassword.strip();
         user.setPassword(passwordEncoder.encode(savePassword));
