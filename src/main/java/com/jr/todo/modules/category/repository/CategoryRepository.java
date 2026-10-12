@@ -1,5 +1,6 @@
 package com.jr.todo.modules.category.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +10,11 @@ import com.jr.todo.modules.category.entity.Category;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
   List<Category> findAllByUserId(Long userId);
+
+  @Query("SELECT c FROM Category c WHERE c.dateCreation BETWEEN :init AND :end AND user=:user ")
+  List<Category> findByDateAndUserId(@Param("userId") long userId,
+      @Param("init") LocalDateTime init,
+      @Param("end") LocalDateTime end);
 
   @Query("SELECT c FROM Category c WHERE c.categoryId = :id AND c.user.id = :userId")
   Optional<Category> findByCategoryIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
