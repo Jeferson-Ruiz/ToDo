@@ -9,13 +9,11 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,10 +21,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import com.jr.todo.DataProviderCategory;
 import com.jr.todo.DataProviderTask;
+import com.jr.todo.dto.PagedResponse;
 import com.jr.todo.modules.category.repository.CategoryRepository;
 import com.jr.todo.modules.task.dto.TaskCreateDto;
 import com.jr.todo.modules.task.dto.TaskResponseDto;
@@ -34,7 +35,7 @@ import com.jr.todo.modules.task.entity.Task;
 import com.jr.todo.modules.task.enums.Priority;
 import com.jr.todo.modules.task.enums.Status;
 import com.jr.todo.modules.task.repository.TaskRepository;
-import com.jr.todo.modules.user.repository.UserRepository;
+import com.jr.todo.util.CurrentUser;
 import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,22 +48,15 @@ public class TaskServiceTest {
     private TaskRepository taskRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private CurrentUser currentUser;
 
     @InjectMocks
     private TaskService taskService;
 
     @BeforeEach
     void setupSecurity() {
-        var auth = new UsernamePasswordAuthenticationToken("pedro@correo.com", null, List.of());
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        lenient().when(userRepository.findByEmail("pedro@correo.com"))
-                .thenReturn(Optional.of(DataProviderCategory.userMock()));
-    }
-
-    @AfterEach
-    void clearSecurity() {
-        SecurityContextHolder.clearContext();
+        lenient().when(currentUser.currentUser())
+                .thenReturn(DataProviderCategory.userMock());
     }
 
     @Test
@@ -142,11 +136,13 @@ public class TaskServiceTest {
 
     @Test
     void testGetAllTask() {
-        when(taskRepository.findAllByUserId(anyLong())).thenReturn(DataProviderTask.listTaskMock());
-        List<TaskResponseDto> result = taskService.getAllTaks();
+        List<Task> tasks = DataProviderTask.listTaskMock();
+        Page<Task> taskPage = new PageImpl<>(tasks, PageRequest.of(0, 5), tasks.size());
+        when(taskRepository.findAllByUserId(anyLong(), any(Pageable.class))).thenReturn(taskPage);
+        PagedResponse<TaskResponseDto> result = taskService.getAllTaks(0);
 
         assertNotNull(result);
-        assertEquals("Prueba", result.get(0).name());
+        assertEquals("Prueba", result.content().get(0).name());
     }
 
     @Test

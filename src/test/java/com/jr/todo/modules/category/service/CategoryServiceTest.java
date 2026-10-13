@@ -11,7 +11,6 @@ import static org.mockito.Mockito.lenient;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,15 +18,18 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import com.jr.todo.DataProviderCategory;
+import com.jr.todo.dto.PagedResponse;
 import com.jr.todo.modules.category.dto.CategoryCreateDto;
 import com.jr.todo.modules.category.dto.CategoryResponseDto;
 import com.jr.todo.modules.category.entity.Category;
 import com.jr.todo.modules.category.repository.CategoryRepository;
 import com.jr.todo.modules.task.repository.TaskRepository;
-import com.jr.todo.modules.user.repository.UserRepository;
+import com.jr.todo.util.CurrentUser;
 import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,21 +42,14 @@ public class CategoryServiceTest {
     private CategoryRepository categoryRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private CurrentUser currentUser;
 
     @InjectMocks
     private CategoryService categoryService;
 
     @BeforeEach
     void setupSecurity() {
-        var auth = new UsernamePasswordAuthenticationToken("pedro@correo.com", null, List.of());
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        lenient().when(userRepository.findByEmail("pedro@correo.com")).thenReturn(Optional.of(DataProviderCategory.userMock()));
-    }
-
-    @AfterEach
-    void clearSecurity() {
-        SecurityContextHolder.clearContext();
+        lenient().when(currentUser.currentUser()).thenReturn(DataProviderCategory.userMock());
     }
 
     @Test
@@ -99,12 +94,15 @@ public class CategoryServiceTest {
 
     @Test
     void testFindAll() {
-        when(categoryRepository.findAllByUserId(anyLong())).thenReturn(DataProviderCategory.listCategoryDtosMock());
-        List<CategoryResponseDto> result = categoryService.findAll();
+        List<Category> categories = DataProviderCategory.listCategoryDtosMock();
+        Page<Category> categoryPage = new PageImpl<>(categories, PageRequest.of(0, 5), categories.size());
+        when(categoryRepository.findAllByUserId(anyLong(), any(Pageable.class))).thenReturn(categoryPage);
+        PagedResponse<CategoryResponseDto> result = categoryService.findAll(0);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals("Compras", result.get(0).name());
+        assertFalse(result.content().isEmpty());
+        assertEquals("Compras", result.content().get(0).name());
+        verify(categoryRepository).findAllByUserId(anyLong(), any(Pageable.class));
     }
 
     @Test
