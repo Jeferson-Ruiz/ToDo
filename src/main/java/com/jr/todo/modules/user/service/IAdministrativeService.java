@@ -22,4 +22,6 @@ public interface IAdministrativeService {
 
     List<UserResponseDto> findAllByRole(Role role);
 
+    UserResponseDto findByName(String name);
+
 }

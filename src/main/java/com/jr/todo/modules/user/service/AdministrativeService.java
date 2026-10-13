@@ -19,6 +19,7 @@ import com.jr.todo.util.DateValidationsHelper;
 import com.jr.todo.util.PaginationUtil;
 import com.jr.todo.util.UserSearchMethods;
 import com.jr.todo.util.UserValidationHelper;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class AdministrativeService implements IAdministrativeService {
@@ -59,6 +60,13 @@ public class AdministrativeService implements IAdministrativeService {
         Page<User> userPage = userRepository.findAll(pageable);
         Page<UserResponseDto> dtoPage = userPage.map(UserResponseDto::toDto);
         return PaginationUtil.toResponse(dtoPage);
+    }
+
+    @Override 
+    public UserResponseDto findByName(String name){
+        User user = userRepository.findUserByName(name)
+            .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        return UserResponseDto.toDto(user);
     }
 
     @Override
