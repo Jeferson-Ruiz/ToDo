@@ -21,8 +21,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.email = :email AND u.enabled = true")
   boolean isUserEnabled(@Param("email") String email);
 
-  List<User> findAll();
-
   @Query("SELECT u FROM User u WHERE u.role = :role")
   List<User> findAllByRole(@RequestParam("role") Role role);
 

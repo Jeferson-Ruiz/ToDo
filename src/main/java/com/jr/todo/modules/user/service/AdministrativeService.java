@@ -5,14 +5,18 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.jr.todo.dto.PagedResponse;
 import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.enums.Role;
 import com.jr.todo.modules.user.dto.UserResponseDto;
 import com.jr.todo.modules.user.entity.User;
 import com.jr.todo.modules.user.repository.UserRepository;
 import com.jr.todo.util.DateValidationsHelper;
+import com.jr.todo.util.PaginationUtil;
 import com.jr.todo.util.UserSearchMethods;
 import com.jr.todo.util.UserValidationHelper;
 
@@ -50,9 +54,11 @@ public class AdministrativeService implements IAdministrativeService {
     }
 
     @Override
-    public List<UserResponseDto> findAllUsers() {
-        List<User> users = userRepository.findAll();
-        return toDto(users);
+    public PagedResponse<UserResponseDto> findAllUsers(int page) {
+        Pageable pageable = PaginationUtil.of(page, "registrationDte");
+        Page<User> userPage = userRepository.findAll(pageable);
+        Page<UserResponseDto> dtoPage = userPage.map(UserResponseDto::toDto);
+        return PaginationUtil.toResponse(dtoPage);
     }
 
     @Override

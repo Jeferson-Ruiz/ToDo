@@ -2,6 +2,7 @@ package com.jr.todo.modules.user.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import com.jr.todo.dto.PagedResponse;
 import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.enums.Role;
 import com.jr.todo.modules.user.dto.UserResponseDto;
@@ -15,7 +16,7 @@ public interface IAdministrativeService {
 
     public void updatePassword(long id, String newPassword);
 
-    List<UserResponseDto> findAllUsers();
+    PagedResponse<UserResponseDto> findAllUsers(int page);
 
     List<UserResponseDto> findAllByDate(LocalDate dateInit, LocalDate dateFinish);
 
