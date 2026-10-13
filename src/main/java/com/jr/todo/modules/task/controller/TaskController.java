@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.jr.todo.dto.DateDto;
+import com.jr.todo.dto.PagedResponse;
 import com.jr.todo.dto.DataDto;
 import com.jr.todo.modules.task.dto.DescriptionDto;
 import com.jr.todo.modules.task.dto.PriorityDto;
@@ -43,8 +44,8 @@ public class TaskController {
   }
 
   @GetMapping("/all")
-  public ResponseEntity<?> getAllTasks() {
-    List<TaskResponseDto> taskDtos = taskService.getAllTaks();
+  public ResponseEntity<?> getAllTasks(@RequestParam(defaultValue = "0") int page) {
+    PagedResponse<TaskResponseDto> taskDtos = taskService.getAllTaks(page);
     return ResponseEntity.ok(taskDtos);
   }
 
