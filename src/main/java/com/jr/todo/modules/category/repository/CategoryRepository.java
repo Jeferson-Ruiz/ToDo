@@ -3,13 +3,15 @@ package com.jr.todo.modules.category.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import com.jr.todo.modules.category.entity.Category;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-  List<Category> findAllByUserId(Long userId);
+  Page<Category> findAllByUserId(Long userId, Pageable pageable);
 
   @Query("SELECT c FROM Category c WHERE c.dateCreation BETWEEN :init AND :end AND user=:user ")
   List<Category> findByDateAndUserId(@Param("userId") long userId,
