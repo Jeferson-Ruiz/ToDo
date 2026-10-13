@@ -15,10 +15,12 @@ public class PaginationUtil {
     }
 
     public static Pageable of(int page) {
-        if (page < 0) {
-            throw new IllegalArgumentException("Pagina no valida");
-        }
-        return PageRequest.of(page, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "dateCreation"));
+        return of(page, "dateCreation");
+    }
+
+    public static Pageable of(int page, String sortProperty) {
+        validationSize(page);
+        return PageRequest.of(page, PAGE_SIZE, Sort.by(Sort.Direction.DESC, sortProperty));
     }
 
     public static <T> PagedResponse<T> toResponse(Page<T> page) {
@@ -30,6 +32,12 @@ public class PaginationUtil {
                 page.getTotalPages(),
                 page.hasNext(),
                 page.hasPrevious());
+    }
+
+    private static void validationSize(int page) {
+        if (page < 0) {
+            throw new IllegalArgumentException("Pagina no valida");
+        }
     }
 
 }
