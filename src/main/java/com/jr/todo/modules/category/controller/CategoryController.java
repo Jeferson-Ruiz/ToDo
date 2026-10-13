@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.jr.todo.dto.DataDto;
+import com.jr.todo.dto.PagedResponse;
 import com.jr.todo.modules.category.dto.CategoryCreateDto;
 import com.jr.todo.modules.category.dto.CategoryResponseDto;
 import com.jr.todo.modules.category.service.ICategoryService;
@@ -36,8 +37,8 @@ public class CategoryController {
   }
 
   @GetMapping("/all")
-  public ResponseEntity<?> getAll() {
-    List<CategoryResponseDto> categoryDto = categoryService.findAll();
+  public ResponseEntity<?> getAll(@RequestParam(defaultValue = "0") int page) {
+    PagedResponse<CategoryResponseDto> categoryDto = categoryService.findAll(page);
     return ResponseEntity.ok(categoryDto);
   }
 
