@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import com.jr.todo.dto.PagedResponse;
 import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.enums.Role;
 import com.jr.todo.modules.user.dto.EnableUpdateDto;
@@ -45,8 +46,8 @@ public class AdmistrativeController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> getAllUsers() {
-        List<UserResponseDto> users = administrativeService.findAllUsers();
+    public ResponseEntity<?> getAllUsers(@RequestParam(defaultValue = "0") int page) {
+        PagedResponse<UserResponseDto> users = administrativeService.findAllUsers(page);
         return ResponseEntity.ok(users);
     }
 
