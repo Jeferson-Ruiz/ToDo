@@ -2,6 +2,7 @@ package com.jr.todo.modules.category.service;
 
 import java.time.LocalDate;
 import java.util.List;
+import com.jr.todo.dto.PagedResponse;
 import com.jr.todo.modules.category.dto.CategoryCreateDto;
 import com.jr.todo.modules.category.dto.CategoryResponseDto;
 
@@ -9,7 +10,7 @@ public interface ICategoryService {
 
   CategoryResponseDto createCategory(CategoryCreateDto categoryDto);
 
-  List<CategoryResponseDto> findAll();
+  PagedResponse<CategoryResponseDto> findAll(int page);
 
   CategoryResponseDto findByName(String name);
 
