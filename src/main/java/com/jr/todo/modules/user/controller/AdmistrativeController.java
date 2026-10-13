@@ -51,6 +51,13 @@ public class AdmistrativeController {
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping("/name")
+    public ResponseEntity<?> getUserByName(@RequestParam String name) {
+        UserResponseDto userDto = administrativeService.findByName(name);
+        return ResponseEntity.ok(userDto);
+    }
+
+
     @GetMapping("/role/{role}")
     public ResponseEntity<?> getAllUsersByRole(@RequestParam Role role) {
         List<UserResponseDto> users = administrativeService.findAllByRole(role);
