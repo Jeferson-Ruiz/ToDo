@@ -5,7 +5,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import com.jr.todo.dto.PagedResponse;
 import com.jr.todo.modules.category.entity.Category;
 import com.jr.todo.modules.category.repository.CategoryRepository;
 import com.jr.todo.modules.task.dto.TaskCreateDto;
@@ -17,6 +22,7 @@ import com.jr.todo.modules.task.repository.TaskRepository;
 import com.jr.todo.modules.user.entity.User;
 import com.jr.todo.util.CurrentUser;
 import com.jr.todo.util.DateValidationsHelper;
+import com.jr.todo.util.PaginationUtil;
 import com.jr.todo.util.TextFormat;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -68,9 +74,14 @@ public class TaskService implements ITaskService {
   Find
   ----------------------*/
   @Override
-  public List<TaskResponseDto> getAllTaks() {
-    List<Task> tasks = taskRepository.findAllByUserId(currentUser.currentUser().getId());
-    return mapToDto(tasks);
+  public PagedResponse<TaskResponseDto> getAllTaks(int page) {
+    Long id = currentUser.currentUser().getId();
+    Pageable pageable = PaginationUtil.of(page);
+
+    Page<Task> taskPage = taskRepository.findAllByUserId(id, pageable);
+    Page<TaskResponseDto> dtoPage = taskPage.map(TaskResponseDto :: toDto);
+
+    return PaginationUtil.toResponse(dtoPage);
   }
 
   @Override

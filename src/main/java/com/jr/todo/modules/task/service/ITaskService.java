@@ -3,6 +3,7 @@ package com.jr.todo.modules.task.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import com.jr.todo.dto.PagedResponse;
 import com.jr.todo.modules.task.dto.TaskCreateDto;
 import com.jr.todo.modules.task.dto.TaskResponseDto;
 import com.jr.todo.modules.task.enums.Priority;
@@ -12,7 +13,7 @@ public interface ITaskService {
 
   TaskResponseDto createTask(TaskCreateDto taskDto);
 
-  List<TaskResponseDto> getAllTaks();
+  PagedResponse<TaskResponseDto> getAllTaks(int page);
 
   List<TaskResponseDto> getAllByCategory(String name);
 
