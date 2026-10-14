@@ -27,6 +27,7 @@ public class SendRecoveryAccount {
     }
 
     public void sendEmailActivation(User user) {
+        accountRecoveryTokenRepository.deleteByUserId(user.getId());
         String token = UUID.randomUUID().toString();
         AccountRecoveryToken recoveryToken = new AccountRecoveryToken();
         recoveryToken.setToken(token);
