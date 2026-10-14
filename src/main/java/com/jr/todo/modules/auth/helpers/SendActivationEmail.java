@@ -27,6 +27,7 @@ public class SendActivationEmail {
     }
 
     public void sendActivationEmail(User user) {
+        activationTokenRepository.deleteByUserId(user.getId());
         String token = UUID.randomUUID().toString();
 
         AccountActivationToken activationToken = new AccountActivationToken();
