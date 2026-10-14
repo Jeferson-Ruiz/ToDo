@@ -87,6 +87,7 @@ public class AuthService implements IAuthService {
   }
 
   @Override
+  @Transactional
   public void activateAccount(String token) {
     AccountActivationToken activationToken = accountActivationTokenRepository.findByToken(token)
         .orElseThrow(() -> new EntityNotFoundException("token de activacion no valido"));
