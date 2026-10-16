@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Size;
 public record TaskCreateDto(
     @NotBlank(message = "El nombre es obligatorio") @Size(max = 50, message = "El nombre no puede exceder 50 caracteres") String name,
 
-    @NotBlank(message = "La descripcion es obligatoria") @Size(max = 200, message = "La descripcion no puede exceder 200 caracteres") String description,
+    @Size(max = 50, message = "La descripcion no puede exceder 50 caracteres") String description,
 
     Status status,
 
