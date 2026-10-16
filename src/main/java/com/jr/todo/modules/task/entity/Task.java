@@ -25,7 +25,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "tareas", uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "name"}))
+@Table(name = "tareas", uniqueConstraints = @UniqueConstraint(columnNames = { "user_id", "name" }))
 public class Task {
 
   @Id
@@ -36,7 +36,7 @@ public class Task {
   @Column(nullable = false, length = 50)
   private String name;
 
-  @Column(nullable = false, length = 200)
+  @Column(length = 100)
   private String description;
 
   @Column(name = "date_creation")
