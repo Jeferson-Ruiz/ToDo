@@ -1,7 +1,6 @@
 package com.jr.todo.modules.category.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import com.jr.todo.modules.task.entity.Task;
 import com.jr.todo.modules.user.entity.User;
@@ -47,5 +46,5 @@ public class Category {
   private User user;
 
   @OneToMany(mappedBy = "category", cascade = CascadeType.PERSIST)
-  private List<Task> task = new ArrayList<>();
+  private List<Task> task;
 }
