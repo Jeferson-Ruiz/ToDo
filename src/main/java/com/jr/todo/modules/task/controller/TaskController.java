@@ -57,8 +57,8 @@ public class TaskController {
 
   @GetMapping("/name")
   public ResponseEntity<?> getTaskByName(@RequestParam String name) {
-    TaskResponseDto taskDto = taskService.getTaskByName(name);
-    return ResponseEntity.ok(taskDto);
+    List<TaskResponseDto> taskDtos = taskService.getTaskByName(name);
+    return ResponseEntity.ok(taskDtos);
   }
 
   @GetMapping("/date")

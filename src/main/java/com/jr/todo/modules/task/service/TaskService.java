@@ -92,10 +92,11 @@ public class TaskService implements ITaskService {
   }
 
   @Override
-  public TaskResponseDto getTaskByName(String name) {
-    String nameNorma = TextFormat.nameFormat(name);
-    Task task = findTaskByName(nameNorma);
-    return TaskResponseDto.toDto(task);
+  public List<TaskResponseDto> getTaskByName(String name) {
+    String nameNorma = TextFormat.nameFormat(name.strip());
+    List<Task> tasks = taskRepository.findByNameStartingWithAndUserId(nameNorma,
+        currentUser.currentUser().getId());
+    return mapToDto(tasks);
   }
 
   @Override

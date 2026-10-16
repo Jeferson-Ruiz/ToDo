@@ -17,7 +17,7 @@ public interface ITaskService {
 
   List<TaskResponseDto> getAllByCategory(String name);
 
-  TaskResponseDto getTaskByName(String name);
+  List<TaskResponseDto> getTaskByName(String name);
 
   List<TaskResponseDto> getAllTaskByDate(LocalDate dateInit, LocalDate dateFinish);
 
