@@ -3,7 +3,6 @@ package com.jr.todo.modules.task.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,10 +21,13 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
   @Query("SELECT t FROM Task t WHERE t.name = :name AND t.user.id = :userId")
   Optional<Task> findTaskByNameAndUserId(@Param("name") String name, @Param("userId") Long userId);
 
+  @Query("SELECT t FROM Task t WHERE t.name LIKE CONCAT(:name, '%') AND t.user.id = :userId")
+  List<Task> findByNameStartingWithAndUserId(@Param("name") String name, @Param("userId") Long userId);
+
   @Query("SELECT t FROM Task t WHERE t.taskId = :id AND t.user.id = :userId")
   Optional<Task> findByTaskIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
 
-  @Query("SELECT t FROM Task t WHERE t.deadline BETWEEN :start  AND :end AND t.user =:user")
+  @Query("SELECT t FROM Task t WHERE t.deadline BETWEEN :start  AND :end AND t.user.id =:user")
   List<Task> findTasksByDateAndUserId(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end,
       @Param("user") Long user);
 
