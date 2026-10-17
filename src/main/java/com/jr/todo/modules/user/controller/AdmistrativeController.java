@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.jr.todo.dto.PagedResponse;
-import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.enums.Role;
+import com.jr.todo.modules.user.dto.AdminCreateDto;
 import com.jr.todo.modules.user.dto.EnableUpdateDto;
 import com.jr.todo.modules.user.dto.PasswordUpdateAdminDto;
 import com.jr.todo.modules.user.dto.UpdateRoleDto;
@@ -32,7 +32,7 @@ public class AdmistrativeController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> userCreate(@Valid @RequestBody UserCreateDto userRequest) {
+    public ResponseEntity<?> userCreate(@Valid @RequestBody AdminCreateDto userRequest) {
         UserResponseDto userDto = administrativeService.createUser(userRequest);
         return ResponseEntity.ok(userDto);
     }

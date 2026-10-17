@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.jr.todo.dto.PagedResponse;
-import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.enums.Role;
+import com.jr.todo.modules.user.dto.AdminCreateDto;
 import com.jr.todo.modules.user.dto.UserResponseDto;
 import com.jr.todo.modules.user.entity.User;
 import com.jr.todo.modules.user.repository.UserRepository;
@@ -39,7 +39,7 @@ public class AdministrativeService implements IAdministrativeService {
 
     // Metodos de ADMIN
     @Override
-    public UserResponseDto createUser(UserCreateDto userDto) {
+    public UserResponseDto createUser(AdminCreateDto userDto) {
         String username = userDto.username().strip();
         String email = userDto.email().strip();
 
@@ -48,6 +48,7 @@ public class AdministrativeService implements IAdministrativeService {
 
         User user = userDto.toEntity();
         user.setUsername(username);
+        user.setEmail(email);
         user.setPassword(passwordEncoder.encode(userDto.password()));
         user.setEnabled(true);
         user.setRegistrationDte(LocalDateTime.now());
