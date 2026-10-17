@@ -13,7 +13,7 @@ import com.jr.todo.modules.category.entity.Category;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
   Page<Category> findAllByUserId(Long userId, Pageable pageable);
 
-  @Query("SELECT c FROM Category c WHERE c.dateCreation BETWEEN :init AND :end AND user=:user ")
+  @Query("SELECT c FROM Category c WHERE c.dateCreation BETWEEN :init AND :end AND c.user.id = :userId")
   List<Category> findByDateAndUserId(@Param("userId") long userId,
       @Param("init") LocalDateTime init,
       @Param("end") LocalDateTime end);
@@ -23,6 +23,9 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
   @Query("SELECT c FROM Category c WHERE c.name = :name AND c.user.id = :userId")
   Optional<Category> findByNameAndUserId(@Param("name") String name, @Param("userId") Long userId);
+
+  @Query("SELECT c FROM Category c WHERE c.name LIKE CONCAT(:name, '%') AND c.user.id = :userId")
+  List<Category> findByNameStartingWithAndUserId(@Param("name") String name, @Param("userId") Long userId);
 
   @Query("SELECT COUNT(c)>0 FROM Category c WHERE c.name = :name AND c.user.id = :userId")
   boolean existsByNameAndUserId(@Param("name") String name, @Param("userId") Long userId);
