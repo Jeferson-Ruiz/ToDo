@@ -107,19 +107,22 @@ public class CategoryServiceTest {
 
     @Test
     void testFindByName() {
-        when(categoryRepository.findByNameAndUserId(anyString(), anyLong())).thenReturn(Optional.of(DataProviderCategory.categoryMock()));
-        CategoryResponseDto result = categoryService.findByName("Compras");
+        when(categoryRepository.findByNameStartingWithAndUserId(anyString(), anyLong()))
+                .thenReturn(DataProviderCategory.listCategoryDtosMock());
+        List<CategoryResponseDto> result = categoryService.findByName("Comp");
 
-        assertEquals("Compras", result.name());
         assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals("Compras", result.get(0).name());
     }
 
     @Test
-    void testFindByNameError() {
-        when(categoryRepository.findByNameAndUserId(anyString(), anyLong())).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> {
-            categoryService.findByName("Inexistente");
-        });
+    void testFindByNameEmpty() {
+        when(categoryRepository.findByNameStartingWithAndUserId(anyString(), anyLong())).thenReturn(List.of());
+        List<CategoryResponseDto> result = categoryService.findByName("Inexistente");
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @Test
