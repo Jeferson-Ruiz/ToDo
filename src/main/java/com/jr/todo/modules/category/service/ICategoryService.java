@@ -12,7 +12,7 @@ public interface ICategoryService {
 
   PagedResponse<CategoryResponseDto> findAll(int page);
 
-  CategoryResponseDto findByName(String name);
+  List<CategoryResponseDto> findByName(String name);
 
   void updateName(Long id, String newName);
 

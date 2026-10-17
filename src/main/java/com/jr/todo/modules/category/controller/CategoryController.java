@@ -46,14 +46,14 @@ public class CategoryController {
   public ResponseEntity<?> getAllByDate(
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateInit,
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateEnd) {
-    List<CategoryResponseDto> categoryDto = categoryService.findAllCategoriesByDates(null, null);
+    List<CategoryResponseDto> categoryDto = categoryService.findAllCategoriesByDates(dateInit, dateEnd);
     return ResponseEntity.ok(categoryDto);
   }
 
   @GetMapping("/name")
   public ResponseEntity<?> getByName(@RequestParam String name) {
-    CategoryResponseDto category = categoryService.findByName(name);
-    return ResponseEntity.ok(category);
+    List<CategoryResponseDto> categories = categoryService.findByName(name);
+    return ResponseEntity.ok(categories);
   }
 
   @PatchMapping("/update-name/{id}")

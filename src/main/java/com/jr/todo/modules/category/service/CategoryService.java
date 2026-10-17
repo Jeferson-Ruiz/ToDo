@@ -75,12 +75,11 @@ public class CategoryService implements ICategoryService {
   }
 
   @Override
-  public CategoryResponseDto findByName(String name) {
+  public List<CategoryResponseDto> findByName(String name) {
     Long userId = currentUser.currentUser().getId();
-    String normalized = TextFormat.nameFormat(name);
-    Category category = categoryRepository.findByNameAndUserId(normalized, userId)
-        .orElseThrow(() -> new EntityNotFoundException("Categoria no encontrada"));
-    return CategoryResponseDto.toDto(category);
+    String normalized = TextFormat.nameFormat(name.strip());
+    List<Category> categories = categoryRepository.findByNameStartingWithAndUserId(normalized, userId);
+    return toDto(categories);
   }
 
   @Override
