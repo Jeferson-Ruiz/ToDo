@@ -166,14 +166,15 @@ public class TaskServiceTest {
 
     @Test
     void testGetTaskByName() {
-        String taskName = "prueba";
-        when(taskRepository.findTaskByNameAndUserId(anyString(), anyLong()))
-                .thenReturn(Optional.of(DataProviderTask.taskMock()));
-        TaskResponseDto taskDto = taskService.getTaskByName(taskName);
+        String taskName = "P";
+        when(taskRepository.findByNameStartingWithAndUserId(anyString(), anyLong()))
+                .thenReturn(DataProviderTask.listTaskMock());
+        List<TaskResponseDto> result = taskService.getTaskByName(taskName);
 
-        assertEquals("Prueba", taskDto.name());
-        assertNotNull(taskDto);
-        verify(taskRepository).findTaskByNameAndUserId(eq("Prueba"), anyLong());
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("Prueba", result.get(0).name());
+        verify(taskRepository).findByNameStartingWithAndUserId(eq("P"), anyLong());
     }
 
     @Test
@@ -185,11 +186,11 @@ public class TaskServiceTest {
     }
 
     @Test
-    void testGetTaskByNameEntityNotFound() {
-        when(taskRepository.findTaskByNameAndUserId(anyString(), anyLong())).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> {
-            taskService.getTaskByName("prueba");
-        });
+    void testGetTaskByNameEmpty() {
+        when(taskRepository.findByNameStartingWithAndUserId(anyString(), anyLong())).thenReturn(List.of());
+        List<TaskResponseDto> result = taskService.getTaskByName("Xyz");
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @Test
