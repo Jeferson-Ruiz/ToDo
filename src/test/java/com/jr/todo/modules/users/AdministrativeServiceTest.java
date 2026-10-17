@@ -14,8 +14,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.jr.todo.DataProviderAdministrative;
-import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.enums.Role;
+import com.jr.todo.modules.user.dto.AdminCreateDto;
 import com.jr.todo.modules.user.dto.UserResponseDto;
 import com.jr.todo.modules.user.entity.User;
 import com.jr.todo.modules.user.repository.UserRepository;
@@ -44,7 +44,7 @@ public class AdministrativeServiceTest {
 
     @Test
     void testCreateUser() {
-        UserCreateDto useDto = DataProviderAdministrative.userDtoMock();
+        AdminCreateDto useDto = DataProviderAdministrative.userDtoMock();
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
         UserResponseDto result = administrativeService.createUser(useDto);
         ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
@@ -53,8 +53,22 @@ public class AdministrativeServiceTest {
     }
 
     @Test
+    void testCreateUserAsignaRolYEnabled() {
+        AdminCreateDto userDto = DataProviderAdministrative.userDtoMock();
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        administrativeService.createUser(userDto);
+
+        ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(captor.capture());
+        assertEquals(Role.ADMIN, captor.getValue().getRole());
+        assertTrue(captor.getValue().isEnabled());
+        assertEquals("admin@correo.com", captor.getValue().getEmail());
+    }
+
+    @Test
     void testCreateUserErrorUsername() {
-        UserCreateDto userDto = DataProviderAdministrative.userDtoMock();
+        AdminCreateDto userDto = DataProviderAdministrative.userDtoMock();
         doThrow(new IllegalArgumentException("username ya registrado"))
                 .when(userValidationHelper).validateUsername(anyString());
 
@@ -67,7 +81,7 @@ public class AdministrativeServiceTest {
 
     @Test
     void testCreateUserErrorEmail() {
-        UserCreateDto userDto = DataProviderAdministrative.userDtoMock();
+        AdminCreateDto userDto = DataProviderAdministrative.userDtoMock();
         doThrow(new IllegalArgumentException("email ya registrado"))
                 .when(userValidationHelper).validateEmail(anyString());
         assertThrows(IllegalArgumentException.class, () -> {

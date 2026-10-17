@@ -1,14 +1,14 @@
 package com.jr.todo;
 
 import java.time.LocalDateTime;
-import com.jr.todo.dto.UserCreateDto;
 import com.jr.todo.enums.Role;
+import com.jr.todo.modules.user.dto.AdminCreateDto;
 import com.jr.todo.modules.user.entity.User;
 
 public class DataProviderAdministrative {
 
-    public static UserCreateDto userDtoMock() {
-        return new UserCreateDto("admin", "admin", "admin@correo.com", "admin", "adminpassword");
+    public static AdminCreateDto userDtoMock() {
+        return new AdminCreateDto("admin", "admin", "admin@correo.com", "admin", "adminpassword", Role.ADMIN);
     }
 
     public static User userMock() {
