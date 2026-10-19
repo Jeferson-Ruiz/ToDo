@@ -29,4 +29,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
   @Query("SELECT COUNT(c)>0 FROM Category c WHERE c.name = :name AND c.user.id = :userId")
   boolean existsByNameAndUserId(@Param("name") String name, @Param("userId") Long userId);
+
+  @Query("SELECT c.name FROM Category c WHERE c.user.id = :userId")
+  List<String> findNamesByUserId(@Param("userId") Long userId);
 }

@@ -42,6 +42,11 @@ public class CategoryController {
     return ResponseEntity.ok(categoryDto);
   }
 
+  @GetMapping("/names")
+  public ResponseEntity<List<String>> getAllNames() {
+    return ResponseEntity.ok(categoryService.findAllNames());
+  }
+
   @GetMapping("/date")
   public ResponseEntity<?> getAllByDate(
       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateInit,

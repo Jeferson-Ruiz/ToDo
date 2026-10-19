@@ -63,6 +63,11 @@ public class CategoryService implements ICategoryService {
   }
 
   @Override
+  public List<String> findAllNames() {
+    return categoryRepository.findNamesByUserId(currentUser.currentUser().getId());
+  }
+
+  @Override
   public List<CategoryResponseDto> findAllCategoriesByDates(LocalDate dateInit, LocalDate dateFinish) {
     DateValidationsHelper.dateValidation(dateInit, dateFinish);
 

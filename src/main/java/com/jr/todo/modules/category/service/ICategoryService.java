@@ -12,6 +12,8 @@ public interface ICategoryService {
 
   PagedResponse<CategoryResponseDto> findAll(int page);
 
+  List<String> findAllNames();
+
   List<CategoryResponseDto> findByName(String name);
 
   void updateName(Long id, String newName);
