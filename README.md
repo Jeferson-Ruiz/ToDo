@@ -36,7 +36,7 @@ Cada paquete está separado en capas y contiene sus propias clases `controller`,
 
 - **Java 21 + Spring Boot 4.0.3 + Maven Wrapper 3.9.12** — Base moderna y estable. Se usa exclusivamente `./mvnw` para garantizar reproducibilidad.
 - **Spring WebMVC** — API síncrona REST sobre el puerto `8081`.
-- **Spring Data JPA + MySQL + Hibernate `MariaDBDialect` + `ddl-auto=update`** — Persistencia relacional con creación automática del esquema para agilizar el desarrollo inicial.
+- **Spring Data JPA + MySQL + Hibernate `MySQLDialect` + `ddl-auto=update`** — Persistencia relacional con creación automática del esquema para agilizar el desarrollo inicial.
 - **Spring Security + JJWT 0.12.3 (HS256)** — Seguridad stateless con tokens firmados en Base64.
 - **Spring Validation** — Validación declarativa en DTOs.
 - **Spring Mail + Thymeleaf** — Envío de emails transaccionales con plantillas HTML (`ActivationEmail.html`, `AccountRecovery.html`).
@@ -61,7 +61,7 @@ POST /auth/resendemail {email}
 POST /auth/login {email, password}
   -> busca por email, verifica BCrypt, valida isEnabled -> JwtService.getToken(user) -> {token, email, role, expiresIn}
 
-POST /auth/logout (Header: Bearer <token>)
+POST /auth/logout (requiere JWT válido; Header: Bearer <token>)
   -> extrae jti y exp, persiste RevokedToken si exp > now
 ```
 
@@ -80,7 +80,7 @@ POST /recovery/api/reset-password?token=xxx {newPassword, repeatPassword}
 - Java 21
 - Maven Wrapper incluido (`./mvnw`, no requiere instalación global de Maven)
 - MySQL 8 en `localhost:3306` con base de datos `to_do` (se crea automáticamente si no existe)
-- Cuenta de Gmail con App Password para el envío de correos (opcional para desarrollo sin email)
+- Cuenta de Gmail con App Password para el envío de correos (obligatorio: la app no arranca sin `email.properties`)
 
 ## Puesta en marcha
 
@@ -112,24 +112,9 @@ cp "src/main/resources/email.properties.example" "src/main/resources/email.prope
 ./mvnw test
 ```
 
-`EmailConfig` carga `email.properties` mediante `@PropertySource("classpath:email.properties")` con `smtp.gmail.com:587`. Si el archivo falta, la aplicación no inicia. La configuración de VS Code en `.vscode/launch.json` espera un archivo `.env` en la raíz para variables de entorno.
+`EmailConfig` carga `email.properties` mediante `@PropertySource("classpath:email.properties")` con `smtp.gmail.com:587`. Si el archivo falta, la aplicación no inicia. El archivo `.env` solo lo usa la configuración de VS Code (`.vscode/launch.json`); la aplicación no lo lee.
 
-## Configuración
 
-| Propiedad | Descripción | Valor por defecto |
-|---|---|---|
-| `server.port` | Puerto del servidor | `8081` |
-| `spring.datasource.url` | URL de MySQL | `jdbc:mysql://localhost:3306/to_do` |
-| `spring.datasource.username` | Usuario MySQL | `root` |
-| `spring.datasource.password` | Contraseña MySQL | `123456` (example) |
-| `jwt.secret` | Clave Base64 para HS256 | Generar con `openssl rand -base64 32` |
-| `jwt.expiration` | Expiración del JWT en ms | `86400000` (24h) |
-| `app.frontend.url` | URL del frontend para links de email y CORS prod | `http://localhost:5173` |
-| `app.env` | Entorno (`dev`/`prod`), controla CORS | `dev` |
-| `email.username` | Gmail para envíos | — |
-| `email.password` | App Password Gmail sin espacios | — |
-
-En `prod`, CORS permite solo `app.frontend.url`; en `dev` permite `*` con `AllowCredentials=false` y `maxAge=3600`.
 
 ## Testing
 
@@ -166,17 +151,8 @@ todo/
 │   │   │   │   └── UserValidationHelper.java
 │   │   │   └── modules/
 │   │   │       ├── auth/
-│   │   │       │   ├── config/
-│   │   │       │   ├── controller/
-│   │   │       │   ├── service/
-│   │   │       │   ├── entity/
-│   │   │       │   ├── repository/
-│   │   │       │   └── helpers/
+
 │   │   │       ├── user/
-│   │   │       │   ├── controller/
-│   │   │       │   ├── service/
-│   │   │       │   ├── entity/
-│   │   │       │   └── repository/
 │   │   │       ├── category/
 │   │   │       ├── task/
 │   │   │       └── sendEmails/
@@ -184,14 +160,12 @@ todo/
 │   │       ├── application.properties.example
 │   │       ├── email.properties.example
 │   │       └── templates/
-│   │           ├── ActivationEmail.html
-│   │           ├── RecoveryEmail.html
-│   │           └── AccountRecovery.html
+
 │   └── test/
 │       └── java/com/jr/todo/
 │           ├── DataProvider*.java
 │           ├── modules/
-│           │   └── **/service/*Test.java
+
 │           └── utils/
 └── pom.xml
 ```
@@ -202,5 +176,5 @@ Ver `AGENTS.md` para el detalle operativo orientado a agentes de desarrollo (com
 
 - Normalización de nombres con `TextFormat.nameFormat` para categorías y tareas; `strip()` en autenticación. Comparar sin normalizar rompe las validaciones de unicidad.
 - Todo acceso a datos filtra por `userId` obtenido del `SecurityContext` (email). No se exponen datos de otros usuarios.
-- `deadline` es nullable; si existe debe ser mayor o igual a `dateCreation`. El filtro por fecha espera formato `dd/MM/yyyy HH:mm`.
+- `deadline` es nullable; si existe debe ser mayor o igual a `dateCreation`. Los filtros por fecha usan formato ISO `YYYY-MM-DD` (`?dateInit[&dateEnd]`).
 - Lombok requiere `annotationProcessorPath` configurado y procesamiento de anotaciones habilitado en el IDE.
