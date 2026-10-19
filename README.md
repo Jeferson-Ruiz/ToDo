@@ -151,7 +151,6 @@ todo/
 │   │   │   │   └── UserValidationHelper.java
 │   │   │   └── modules/
 │   │   │       ├── auth/
-
 │   │   │       ├── user/
 │   │   │       ├── category/
 │   │   │       ├── task/
@@ -170,10 +169,7 @@ todo/
 └── pom.xml
 ```
 
-Ver `AGENTS.md` para el detalle operativo orientado a agentes de desarrollo (comandos exactos, invariantes y gotchas).
-
 ## Convenciones relevantes
-
 - Normalización de nombres con `TextFormat.nameFormat` para categorías y tareas; `strip()` en autenticación. Comparar sin normalizar rompe las validaciones de unicidad.
 - Todo acceso a datos filtra por `userId` obtenido del `SecurityContext` (email). No se exponen datos de otros usuarios.
 - `deadline` es nullable; si existe debe ser mayor o igual a `dateCreation`. Los filtros por fecha usan formato ISO `YYYY-MM-DD` (`?dateInit[&dateEnd]`).
